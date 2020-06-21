@@ -2,12 +2,14 @@ import Vue from 'vue'
 import App from './App.vue'
 import vuetify from './plugins/vuetify';
 import TwitchSettings from '../twitch_settings.json';
+import router from './router'
 
 /* INITIALIZE VUE */
 Vue.config.productionTip = false
 
 new Vue({
   vuetify,
+  router,
   render: h => h(App)
 }).$mount('#app')
 
@@ -33,7 +35,7 @@ client.on("message", (target, context, message, self) => {
   console.log(self);
   if(message === "!test") {
     console.warn(context.username)
-    client.action(TwitchSettings.bot_username, context.username + " said: " + message);
+    client.action(TwitchSettings.bot_username, context.username + " executed command: " + message);
   }
 });
 
