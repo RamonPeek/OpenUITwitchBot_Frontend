@@ -37,7 +37,7 @@ client.on("message", (target, context, message, self) => {
   }
 });
 
-client.on("connected", (addr, port) => {
+client.on("connected", (/*addr, port*/) => {
   /*console.log(`* Connected to ${addr}:${port}`);*/
 });
 
