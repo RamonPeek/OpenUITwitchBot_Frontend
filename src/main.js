@@ -29,16 +29,16 @@ const options = {
 const client = new tmi.client(options);
 
 client.on("message", (target, context, message, self) => {
-  console.warn(target);
-  console.warn(context);
-  console.warn(self);
+  console.log(target);
+  console.log(self);
   if(message === "!test") {
-    client.action(TwitchSettings.bot_username, "test");
+    console.warn(context.username)
+    client.action(TwitchSettings.bot_username, context.username + " said: " + message);
   }
 });
 
 client.on("connected", (addr, port) => {
-    console.log(`* Connected to ${addr}:${port}`);
+  /*console.log(`* Connected to ${addr}:${port}`);*/
 });
 
 client.connect();
