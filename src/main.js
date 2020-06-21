@@ -15,6 +15,10 @@ new Vue({
 const tmi = require('tmi.js');
 
 const options = {
+    connection: {
+      cluster: "aws",
+      reconnect: true
+    },
     identity: {
         username: TwitchSettings.bot_username,
         password: TwitchSettings.bot_oauth
@@ -24,8 +28,13 @@ const options = {
 
 const client = new tmi.client(options);
 
-client.on("message", (/*target, context, msg, self*/) => {
-    console.log(`* Executed command`);
+client.on("message", (target, context, message, self) => {
+  console.warn(target);
+  console.warn(context);
+  console.warn(self);
+  if(message === "!test") {
+    client.action(TwitchSettings.bot_username, "test");
+  }
 });
 
 client.on("connected", (addr, port) => {
