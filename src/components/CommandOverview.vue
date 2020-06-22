@@ -1,20 +1,23 @@
 <template>
   <v-card class="command_overview">
-    <v-card-title>
-      Received commands
-    </v-card-title>
-    <v-divider
-        :inset="inset"
+    <div class="command_chips_title_container">
+      <v-card-title>
+        Received commands
+      </v-card-title>
+      <v-divider
         horizontal
       ></v-divider>
-    <div class="command_chips_container">
+    </div>
+    <div id="command_chips_container">
       <div v-for="command in receivedCommands" :key="command.index" class="command_chip_container">
         <v-chip>
           <v-avatar left>
             <v-icon>mdi-account-circle</v-icon>
           </v-avatar>
+          <p class="command_chip_datetime">{{command.datetime.getHours()}}:{{command.datetime.getMinutes()}}</p>
           <p class="command_chip_text"><b>{{command.username}}</b>: {{command.command}}</p>
         </v-chip>
+
       </div>
     </div>
   </v-card>
@@ -30,14 +33,25 @@
     padding-top: 15px;
   }
 
-  .command_chips_container {
+  .command_chips_title_container {
+    height: 50px;
+  }
+
+  #command_chips_container {
     overflow-y: scroll;
     margin: 5px;
-    height: calc(100% - 73px);
+    margin-top: 20px;
+    height: calc(100% - 75px);
   }
 
   .command_chip_container {
     margin: 5px;
+  }
+
+  .command_chip_datetime {
+    margin-top: 18px;
+    margin-right: 10px;
+    font-size: 8pt;
   }
 </style>
 
@@ -45,6 +59,7 @@
   import BotService from '../services/BotService'
   import TwitchSettings from '../../twitch_settings.json';
   import Command from '../models/Command';
+  import $ from 'jquery';
 
   var bot = new BotService(TwitchSettings.bot_username, TwitchSettings.bot_oauth, TwitchSettings.bot_channels);
 
@@ -54,13 +69,13 @@
     data () {
       return {
         client: null,
-        receivedCommands: []
+        receivedCommands: [],
       }
     },
     created: function() {
       this.initializeBot()
     },
-    destroyed: function() {
+    beforeDestroy: function() {
       this.destroyBot()
     },
     methods: {
@@ -68,12 +83,13 @@
         this.client = bot.getClient();
 
         this.client.on("message", (target, context, message, self) => {
-          var command = new Command(context.username, message);
+          var command = new Command(context.username, message, new Date());
           console.log(context);
           console.log(target);
           console.log(self);
           if(message.startsWith("!")) {
             this.receivedCommands.push(command);
+            $("#command_chips_container").animate({ scrollTop: $('#command_chips_container')[0].scrollHeight}, 500);
               //console.warn(context.username)
               //client.action(TwitchSettings.bot_username, context.username + " executed command: " + message);
           }
