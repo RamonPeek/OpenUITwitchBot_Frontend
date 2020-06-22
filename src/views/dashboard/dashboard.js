@@ -1,7 +1,10 @@
+import CommandOverview from '../../components/CommandOverview'
 
 export default {
   name: 'dashboard',
-  components: {},
+  components: {
+    CommandOverview
+  },
   props: [],
   data () {
     return {
