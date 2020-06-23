@@ -57,11 +57,11 @@
 
 <script>
   import BotService from '../services/BotService'
-  import TwitchSettings from '../../twitch_settings.json';
+  import AppSettings from '../../app_settings.json';
   import Command from '../models/Command';
   import $ from 'jquery';
 
-  var bot = new BotService(TwitchSettings.bot_username, TwitchSettings.bot_oauth, TwitchSettings.bot_channels);
+  var bot = new BotService(AppSettings.bot_username, AppSettings.bot_oauth, AppSettings.bot_channels);
 
   export default {
     name: 'CommandOverview',
