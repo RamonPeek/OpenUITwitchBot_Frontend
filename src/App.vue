@@ -2,7 +2,7 @@
   <v-app class="app">
     <!-- TOP NAVIGATION -->
     <v-app-bar app>
-      <v-app-bar-nav-icon v-if="isMobile()" v-on:click="mobileMenu=!mobileMenu"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon v-if="isMobile()" v-on:click="toggleMobileMenu()"></v-app-bar-nav-icon>
       <div v-if="mobileMenu">
 
       </div>
@@ -18,22 +18,6 @@
         </v-card-actions>
       </v-card>
     </v-app-bar>
-    <!-- MOBILE NAVIGATION -->
-    <div class="mobile_menu_container" v-if="mobileMenu && isMobile()">
-      <v-list dense>
-      <v-subheader>Navigation</v-subheader>
-      <v-list-item-group color="primary">
-        <v-list-item v-for="item in sideNavigationItems" :key="item.index" v-on:click="changeComponent(item.path)">
-          <v-list-item-icon>
-            <v-icon v-text="item.icon"></v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title v-text="item.text"></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-    </div>
     <!-- SIDE NAVIGATION --> 
     <v-navigation-drawer app>
       <v-list dense>
@@ -50,6 +34,27 @@
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
+    <!-- MOBILE NAVIGATION -->
+    <transition name="fade">
+      <div class="mobile_menu_background" v-if="mobileMenu && isMobile()"></div>
+    </transition>
+    <transition name="fade-fast">
+      <div class="mobile_menu_container" v-if="mobileMenu && isMobile()">
+        <v-list dense>
+        <v-subheader>Navigation</v-subheader>
+        <v-list-item-group color="primary">
+          <v-list-item v-for="item in sideNavigationItems" :key="item.index" v-on:click="changeComponent(item.path)">
+            <v-list-item-icon>
+              <v-icon v-text="item.icon"></v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title v-text="item.text"></v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </div>
+    </transition>
     <!-- SITE CONTENT -->
     <v-content app>
       <transition name="fade" mode="out-in">
@@ -93,8 +98,17 @@
     height: calc(100vh - 57px);
     position: fixed;
     top: 57px;
-    z-index: 2;
+    z-index: 3;
+  }
+
+  .mobile_menu_background {
     background-color: black;
+    width: 100vw;
+    height: calc(100vh - 57px);
+    position: fixed;
+    top: 57px;
+    z-index: 2;
+    opacity: 0.7;
   }
 
   /* ROUTER TRANSITION EFFECT */
@@ -108,6 +122,21 @@
   .fade-enter,
   .fade-leave-active {
     opacity: 0
+  }
+
+  /* FADE EFFECTS */
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .3s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
+  }
+
+  .fade-fast-enter-active, .fade-fast-leave-active {
+    transition: opacity .15s;
+  }
+  .fade-fast-enter, .fade-fast-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
   }
 </style>
 
@@ -161,6 +190,9 @@ export default {
         this.mobileMenu = false;
       }
       return mobile;
+    },
+    toggleMobileMenu() {
+      this.mobileMenu= !this.mobileMenu;
     }
   }
 };
