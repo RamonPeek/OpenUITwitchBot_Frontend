@@ -2,7 +2,10 @@
   <v-app class="app">
     <!-- TOP NAVIGATION -->
     <v-app-bar app>
-      <v-app-bar-nav-icon v-if="isMobile"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon v-if="isMobile()" v-on:click="mobileMenu=!mobileMenu"></v-app-bar-nav-icon>
+      <div v-if="mobileMenu">
+          test
+      </div>
       <!--<router-link to="/">Home</router-link>
       <router-link to="/dashboard">Dashboard</router-link>-->
       <v-card>
@@ -83,7 +86,6 @@
   .fade-leave-active {
     opacity: 0
   }
-
 </style>
 
 <script>
@@ -99,6 +101,7 @@ export default {
       "username": "RamonPeek",
       "profilePhoto": "https://personalportfolio-2adb0.firebaseapp.com/profile_picture.png"
     },
+    mobileMenu: false,
     sideNavigationItems: [
       {
         icon: "mdi-home",
@@ -129,7 +132,7 @@ export default {
       }
     },
     isMobile() {
-      return this.$vuetify.breakpoint.xsOnly;
+      return this.$vuetify.breakpoint.width < this.$vuetify.breakpoint.mobileBreakpoint;
     }
   }
 };
