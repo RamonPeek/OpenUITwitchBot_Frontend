@@ -1,5 +1,5 @@
 <template>
-  <v-app class="app">
+  <v-app class="app" >
     <!-- TOP NAVIGATION -->
     <v-app-bar app>
       <v-app-bar-nav-icon v-if="isMobile()" v-on:click="toggleMobileMenu()"></v-app-bar-nav-icon>
@@ -14,9 +14,9 @@
     <!-- SIDE NAVIGATION --> 
     <v-navigation-drawer app>
       <v-list dense>
-      <v-subheader>Navigation</v-subheader>
+      <v-subheader>Quick navigation</v-subheader>
       <v-list-item-group color="primary">
-        <v-list-item v-for="item in sideNavigationItems" :key="item.index" :to="item.path" v-on:click="changeComponent()">
+        <v-list-item v-for="item in sideNavigationItems" :key="item.index" :to="item.path" v-on:click="disabledMobileMenu()">
           <v-list-item-icon>
             <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
@@ -35,7 +35,7 @@
       <div class="mobile_menu_container" v-if="mobileMenu && isMobile()">
         <v-list dense>
         <v-list-item-group color="primary">
-          <v-list-item v-for="item in sideNavigationItems" :key="item.index" :to="item.path" v-on:click="changeComponent()">
+          <v-list-item v-for="item in sideNavigationItems" :key="item.index" :to="item.path" v-on:click="disabledMobileMenu()">
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
               </v-list-item-icon>
@@ -191,7 +191,7 @@ export default {
     ]
   }),
   methods: {
-    changeComponent() {
+    disabledMobileMenu() {
       this.mobileMenu = false;
     },
     isMobile() {
@@ -203,7 +203,15 @@ export default {
     },
     toggleMobileMenu() {
       this.mobileMenu= !this.mobileMenu;
+    },
+    changeComponent(path) {
+      if(this.$router.currentRoute.path !== path) {
+        this.$router.push(path);
+      }
     }
+  },
+  beforeCreate() {
+    this.$vuetify.theme.dark = true;
   }
 };
 </script>
