@@ -2,6 +2,7 @@
   <v-app class="app">
     <!-- TOP NAVIGATION -->
     <v-app-bar app>
+      <v-app-bar-nav-icon v-if="isMobile"></v-app-bar-nav-icon>
       <!--<router-link to="/">Home</router-link>
       <router-link to="/dashboard">Dashboard</router-link>-->
       <v-card>
@@ -14,12 +15,14 @@
         </v-card-actions>
       </v-card>
     </v-app-bar>
+    <!-- MOBILE NAVIGATION -->
+
     <!-- SIDE NAVIGATION --> 
     <v-navigation-drawer app>
       <v-list dense>
       <v-subheader>Navigation</v-subheader>
-      <v-list-item-group v-model="item" color="primary">
-        <v-list-item v-for="(item, i) in sideNavigationItems" :key="i" v-on:click="changeComponent(item.path)">
+      <v-list-item-group color="primary">
+        <v-list-item v-for="item in sideNavigationItems" :key="item.index" v-on:click="changeComponent(item.path)">
           <v-list-item-icon>
             <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
@@ -100,7 +103,7 @@ export default {
       {
         icon: "mdi-home",
         text: "Dashboard",
-        path: "/dashboard"
+        path: "/"
       },
       {
         icon: "mdi-clipboard-alert",
@@ -121,7 +124,12 @@ export default {
   }),
   methods: {
     changeComponent(path) {
-      this.$router.push({ path: path });
+      if(this.$router.currentRoute.path != path) {
+        this.$router.push({ path: path });
+      }
+    },
+    isMobile() {
+      return this.$vuetify.breakpoint.xsOnly;
     }
   }
 };

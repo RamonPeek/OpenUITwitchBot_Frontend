@@ -9,6 +9,9 @@
       ></v-divider>
     </div>
     <div id="command_chips_container">
+      <p class="no_received_commands_text" v-if="receivedCommands.length === 0">
+        No commands received during this session so far.
+      </p>
       <div v-for="command in receivedCommands" :key="command.index" class="command_chip_container">
         <v-chip>
           <v-avatar left>
@@ -17,7 +20,6 @@
           <p class="command_chip_datetime">{{command.datetime.getHours()}}:{{command.datetime.getMinutes()}}</p>
           <p class="command_chip_text"><b>{{command.username}}</b>: {{command.command}}</p>
         </v-chip>
-
       </div>
     </div>
   </v-card>
@@ -52,6 +54,11 @@
     margin-top: 18px;
     margin-right: 10px;
     font-size: 8pt;
+  }
+
+  .no_received_commands_text {
+    text-align: center;
+    margin-top: 100px;
   }
 </style>
 

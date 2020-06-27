@@ -8,19 +8,19 @@ Vue.use(VueRouter)
 
   const routes = [
   {
-    path: '/placeholder',
-    name: 'Home',
-    component: Home
-  },
-  {
-    path: '/dashboard',
-    name: 'Dashboard',
+    path: '/',
+    name: 'Root',
     component: Dashboard
   },
   {
     path: '/commands',
     name: 'Commands',
     component: Commands
+  },
+  {
+    path: '/placeholder',
+    name: 'Home',
+    component: Home
   }
 ]
 
