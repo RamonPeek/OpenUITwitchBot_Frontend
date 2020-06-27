@@ -3,27 +3,20 @@
     <!-- TOP NAVIGATION -->
     <v-app-bar app>
       <v-app-bar-nav-icon v-if="isMobile()" v-on:click="toggleMobileMenu()"></v-app-bar-nav-icon>
-      <div v-if="mobileMenu">
-
-      </div>
-      <!--<router-link to="/">Home</router-link>
-      <router-link to="/dashboard">Dashboard</router-link>-->
-      <v-card>
-        <v-card-actions>
+        <div v-on:click="changeComponent('/placeholder')" class="profile_item_container">
           <v-avatar size="36px" class="profile_photo">
             <img v-bind:src="activeUser.profilePhoto">
           </v-avatar>
-          {{activeUser.username}}
+          <div class="username">{{activeUser.username}}</div>
           <v-icon>mdi-chevron-down</v-icon>
-        </v-card-actions>
-      </v-card>
+        </div>
     </v-app-bar>
     <!-- SIDE NAVIGATION --> 
     <v-navigation-drawer app>
       <v-list dense>
       <v-subheader>Navigation</v-subheader>
       <v-list-item-group color="primary">
-        <v-list-item v-for="item in sideNavigationItems" :key="item.index" v-on:click="changeComponent(item.path)">
+        <v-list-item v-for="item in sideNavigationItems" :key="item.index" :to="item.path" v-on:click="changeComponent()">
           <v-list-item-icon>
             <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
@@ -41,9 +34,8 @@
     <transition name="fade-fast">
       <div class="mobile_menu_container" v-if="mobileMenu && isMobile()">
         <v-list dense>
-        <v-subheader>Navigation</v-subheader>
         <v-list-item-group color="primary">
-          <v-list-item v-for="item in sideNavigationItems" :key="item.index" v-on:click="changeComponent(item.path)">
+          <v-list-item v-for="item in sideNavigationItems" :key="item.index" :to="item.path" v-on:click="changeComponent()">
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
               </v-list-item-icon>
@@ -73,6 +65,17 @@
     margin-right: 10px;
   }
 
+  .profile_item_container {
+    margin-right: 0px !important;
+    display: flex;
+    justify-content: start;
+    margin-left: calc(100% - 150px);
+  }
+
+  .profile_item_container:hover {
+    cursor: pointer;
+  }
+
   ::-webkit-scrollbar-track
   {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
@@ -93,6 +96,10 @@
     background-color: #555;
   }
 
+  .username {
+    padding-top: 6px;
+  }
+
   .mobile_menu_container {
     width: 100vw;
     height: calc(100vh - 57px);
@@ -109,6 +116,12 @@
     top: 57px;
     z-index: 2;
     opacity: 0.7;
+  }
+
+  @media only screen and (max-width: 1263px) {
+    .profile_item_container {
+      margin-left: calc(100% - 180px);
+    }
   }
 
   /* ROUTER TRANSITION EFFECT */
@@ -178,10 +191,7 @@ export default {
     ]
   }),
   methods: {
-    changeComponent(path) {
-      if(this.$router.currentRoute.path != path) {
-        this.$router.push({ path: path });
-      }
+    changeComponent() {
       this.mobileMenu = false;
     },
     isMobile() {
