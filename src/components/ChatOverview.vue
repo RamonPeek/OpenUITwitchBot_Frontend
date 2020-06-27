@@ -26,7 +26,7 @@
 <style scoped>
   .chat_overview {
     width: 100%;
-    height: 100%;
+    height: 300px;
   }
 
   .command_chip_text {

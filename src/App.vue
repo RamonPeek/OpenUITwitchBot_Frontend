@@ -2,6 +2,8 @@
   <v-app class="app">
     <!-- TOP NAVIGATION -->
     <v-app-bar app>
+      <!--<router-link to="/">Home</router-link>
+      <router-link to="/dashboard">Dashboard</router-link>-->
       <v-card>
         <v-card-actions>
           <v-avatar size="36px" class="profile_photo">
@@ -11,16 +13,13 @@
           <v-icon>mdi-chevron-down</v-icon>
         </v-card-actions>
       </v-card>
-
-        <router-link to="/">Home</router-link>
-        <router-link to="/dashboard">Dashboard</router-link>
     </v-app-bar>
     <!-- SIDE NAVIGATION --> 
     <v-navigation-drawer app>
       <v-list dense>
       <v-subheader>Navigation</v-subheader>
       <v-list-item-group v-model="item" color="primary">
-        <v-list-item v-for="(item, i) in sideNavigationItems" :key="i">
+        <v-list-item v-for="(item, i) in sideNavigationItems" :key="i" v-on:click="changeComponent(item.path)">
           <v-list-item-icon>
             <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
@@ -33,7 +32,9 @@
     </v-navigation-drawer>
     <!-- SITE CONTENT -->
     <v-content app>
-      <router-view></router-view>
+      <transition name="fade" mode="out-in">
+        <router-view></router-view>
+      </transition>
     </v-content>
   </v-app>
 </template>
@@ -66,6 +67,20 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: #555;
   }
+
+  /* ROUTER TRANSITION EFFECT */
+  .fade-enter-active,
+  .fade-leave-active {
+    transition-duration: 0.15s;
+    transition-property: opacity;
+    transition-timing-function: ease;
+  }
+
+  .fade-enter,
+  .fade-leave-active {
+    opacity: 0
+  }
+
 </style>
 
 <script>
@@ -83,22 +98,31 @@ export default {
     },
     sideNavigationItems: [
       {
-        "icon": "mdi-home",
-        "text": "Dashboard"
+        icon: "mdi-home",
+        text: "Dashboard",
+        path: "/dashboard"
       },
       {
-        "icon": "mdi-clipboard-alert",
-        "text": "Commands"
+        icon: "mdi-clipboard-alert",
+        text: "Commands",
+        path: "/commands"
       },
       {
-        "icon": "mdi-cancel",
-        "text": "Placeholder"
+        icon: "mdi-cancel",
+        text: "Placeholder",
+        path: "/placeholder"
       },
       {
-        "icon": "mdi-cancel",
-        "text": "Placeholder"
+        icon: "mdi-cancel",
+        text: "Placeholder",
+        path: "/placeholder"
       }
     ]
   }),
+  methods: {
+    changeComponent(path) {
+      this.$router.push({ path: path });
+    }
+  }
 };
 </script>
