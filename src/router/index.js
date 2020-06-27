@@ -16,7 +16,6 @@ Vue.use(VueRouter)
     name: 'Dashboard',
     component: Dashboard
   },
-
 ]
 
 const router = new VueRouter({
