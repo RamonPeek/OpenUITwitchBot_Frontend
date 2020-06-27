@@ -153,6 +153,7 @@ export default {
       if(this.$router.currentRoute.path != path) {
         this.$router.push({ path: path });
       }
+      this.mobileMenu = false;
     },
     isMobile() {
       var mobile = this.$vuetify.breakpoint.width < this.$vuetify.breakpoint.mobileBreakpoint;
