@@ -4,7 +4,7 @@
     <v-app-bar app>
       <v-app-bar-nav-icon v-if="isMobile()" v-on:click="mobileMenu=!mobileMenu"></v-app-bar-nav-icon>
       <div v-if="mobileMenu">
-          test
+
       </div>
       <!--<router-link to="/">Home</router-link>
       <router-link to="/dashboard">Dashboard</router-link>-->
@@ -19,7 +19,21 @@
       </v-card>
     </v-app-bar>
     <!-- MOBILE NAVIGATION -->
-
+    <div class="mobile_menu_container" v-if="mobileMenu && isMobile()">
+      <v-list dense>
+      <v-subheader>Navigation</v-subheader>
+      <v-list-item-group color="primary">
+        <v-list-item v-for="item in sideNavigationItems" :key="item.index" v-on:click="changeComponent(item.path)">
+          <v-list-item-icon>
+            <v-icon v-text="item.icon"></v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title v-text="item.text"></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </div>
     <!-- SIDE NAVIGATION --> 
     <v-navigation-drawer app>
       <v-list dense>
@@ -72,6 +86,15 @@
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: #555;
+  }
+
+  .mobile_menu_container {
+    width: 100vw;
+    height: calc(100vh - 57px);
+    position: fixed;
+    top: 57px;
+    z-index: 2;
+    background-color: black;
   }
 
   /* ROUTER TRANSITION EFFECT */
@@ -132,7 +155,11 @@ export default {
       }
     },
     isMobile() {
-      return this.$vuetify.breakpoint.width < this.$vuetify.breakpoint.mobileBreakpoint;
+      var mobile = this.$vuetify.breakpoint.width < this.$vuetify.breakpoint.mobileBreakpoint;
+      if(!mobile) {
+        this.mobileMenu = false;
+      }
+      return mobile;
     }
   }
 };
