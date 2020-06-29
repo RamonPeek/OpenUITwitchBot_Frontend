@@ -179,14 +179,9 @@ export default {
         path: "/commands"
       },
       {
-        icon: "mdi-cancel",
-        text: "Placeholder",
-        path: "/placeholder"
-      },
-      {
-        icon: "mdi-cancel",
-        text: "Placeholder",
-        path: "/placeholder"
+        icon: "mdi-cog",
+        text: "Settings",
+        path: "/settings"
       }
     ]
   }),
@@ -210,8 +205,5 @@ export default {
       }
     }
   },
-  beforeCreate() {
-    this.$vuetify.theme.dark = true;
-  }
 };
 </script>
