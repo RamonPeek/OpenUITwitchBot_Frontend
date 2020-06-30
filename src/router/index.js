@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Dashboard from '../views/dashboard/dashboard.vue'
 import Commands from '../views/commands/commands.vue'
 import Settings from '../views/settings/settings.vue'
+import Register from '../views/register/register.vue'
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,11 @@ Vue.use(VueRouter)
     path: '/settings',
     name: 'Settings',
     component: Settings
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register
   }
 ]
 
