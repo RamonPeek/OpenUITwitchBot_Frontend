@@ -20,6 +20,15 @@ const store = new Vuex.Store({
   }
 })
 
+router.beforeEach((to, from, next) => {
+  if(from.name === "Register" && to.name !== "Register") {
+    sessionStorage.removeItem("registerCredentialsMemory")
+    next();
+  }else{
+    next();
+  }
+});
+
 /* Initialize app */
 new Vue({
   vuetify,

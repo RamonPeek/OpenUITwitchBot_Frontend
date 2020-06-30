@@ -9,11 +9,6 @@
       ></v-divider>
     </div>
     <div id="command_chips_container">
-      <!--
-      <p class="no_received_commands_text" v-if="receivedCommands.length === 0">
-        No commands received during this session so far.
-      </p>
-      -->
       <div v-for="command in receivedCommands" :key="command.index" class="command_chip_container">
         <v-chip>
           <v-avatar left>

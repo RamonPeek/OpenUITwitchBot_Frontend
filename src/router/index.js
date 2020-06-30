@@ -30,7 +30,7 @@ Vue.use(VueRouter)
     component: Settings
   },
   {
-    path: '/register',
+    path: '/register/:step',
     name: 'Register',
     component: Register
   }

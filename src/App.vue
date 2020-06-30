@@ -48,11 +48,11 @@
       </div>
     </transition>
     <!-- SITE CONTENT -->
-    <v-content app>
+    <v-main app>
       <transition name="fade" mode="out-in">
         <router-view></router-view>
       </transition>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
@@ -186,7 +186,7 @@ export default {
       {
         icon: "mdi-account-multiple-plus",
         text: "Register",
-        path: "/register"
+        path: "/register/1"
       }
     ]
   }),
@@ -210,5 +210,9 @@ export default {
       }
     }
   },
+  mounted() {
+    //TEMP FOR DEV, TODO REMOVE LATER
+    localStorage.clear();
+  }
 };
 </script>
