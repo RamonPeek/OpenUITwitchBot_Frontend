@@ -1,39 +1,7 @@
 <template>
   <v-card class="command_overview">
-    <!--
-    <v-expansion-panels>
-      <v-expansion-panel v-for="command in commands" :key="command.index">
-        <v-expansion-panel-header>{{command.tag}}</v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <v-divider></v-divider><br>
-          Type: {{command.type}}<br>
-          Content: {{command.content}}<br>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-    -->
     <template>
-      <!--
-      <v-simple-table>
-        <template v-slot:default>
-          <thead>
-            <tr>
-              <th v-for="header in headers" :key="header.index">
-                {{header.text}}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in commands" :key="item.index">
-              <td>{{ item.type }}</td>
-              <td>{{ item.tag }}</td>
-              <td>{{ item.content }}</td>
-            </tr>
-          </tbody>
-        </template>
-      </v-simple-table>
-      -->
-      <v-data-table :headers="headers" :items="commands" v-bind:pagination.sync="pagination" hide-actions item-key="items.id">
+      <v-data-table :headers="headers" :items="commands" hide-default-footer item-key="items.id">
         <template v-slot:item="item">
           <tr :data-id="item.id">
             <td style="width: 78px; min-width: 78px;">
@@ -85,6 +53,7 @@ export default {
             sortable: false
           }
       ],
+      pagination: {}
     }
   },
   mounted () {
