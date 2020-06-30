@@ -1,31 +1,33 @@
 <template>
   <div class="register_user">
-    <!--
-    <p>Register user</p>
-    <v-btn color="primary" v-on:click="registerUser">Register</v-btn>
-    -->
-    <v-stepper v-model="currentStep">
+    <v-stepper v-model="currentStep" alt-labels>
       <v-stepper-header>
-        <v-stepper-step :complete="currentStep > 1" step="1">Create credentials</v-stepper-step>
+        <v-stepper-step :complete="currentStep > 1" step="1"><p class="stepper_item_text">Create credentials</p></v-stepper-step>
         <v-divider></v-divider>
-        <v-stepper-step :complete="currentStep > 2" step="2">Link your Twitch account</v-stepper-step>
+        <v-stepper-step :complete="currentStep > 2" step="2"><p class="stepper_item_text">Link your Twitch account</p></v-stepper-step>
         <v-divider></v-divider>
-        <v-stepper-step step="3">Complete registration</v-stepper-step>
+        <v-stepper-step step="3"><p class="stepper_item_text">Complete registration</p></v-stepper-step>
       </v-stepper-header>
       <v-stepper-items>
         <v-stepper-content step="1">
           <!-- CREATE CREDENTIALS CONTENT -->
-          <v-form ref="credentialsForm" v-model="validCredentials" lazy-validation>
-            <!-- MEMORY -->
-              <v-text-field v-model="email" :rules="emailRules" label="E-mail" clearable prepend-icon="mdi-email" required autocomplete="email"></v-text-field>
-              <v-text-field :type="'password'" v-model="password" :rules="passwordRules" label="Password" clearable prepend-icon="mdi-lock" required autocomplete="password"></v-text-field>
-              <v-text-field :type="'password'" v-model="passwordCheck" :rules="passwordCheckRules" label="Password again" clearable prepend-icon="mdi-lock" required autocomplete="passwordCheck"></v-text-field>
-            <!-- NO MEMORY -->
-
-          </v-form>
-          <v-btn color="primary" v-on:click="moveToTwitchLink">
-            Continue
-          </v-btn>
+          <div class="create_credentials_container">
+            <div class="create_credentials_info">
+              <v-card color="#ddd"  class="create_credentials_info_card">
+                First, we will create credentials with which you will be able to log into the app and start using our services. All data is encrypted and will be stored safely. It is possible to delete your account at all times.
+              </v-card>
+            </div>
+            <div class="create_credentials">
+              <v-form ref="credentialsForm" v-model="validCredentials" lazy-validation>
+                <v-text-field v-model="email" :rules="emailRules" label="E-mail" clearable prepend-icon="mdi-email" required autocomplete="email"></v-text-field>
+                <v-text-field :type="'password'" v-model="password" :rules="passwordRules" label="Password" clearable prepend-icon="mdi-lock" required autocomplete="password"></v-text-field>
+                <v-text-field :type="'password'" v-model="passwordCheck" :rules="passwordCheckRules" label="Password again" clearable prepend-icon="mdi-lock" required autocomplete="passwordCheck"></v-text-field>
+              </v-form>
+              <v-btn color="primary" v-on:click="moveToTwitchLink">
+                Continue
+              </v-btn>
+            </div>
+          </div>
         </v-stepper-content>
         <v-stepper-content step="2">
           <!-- LINK TWITCH ACCOUNT-->
@@ -36,17 +38,17 @@
           </div>
           <v-btn v-if="!twitchAuthenticatedAccount" color="secondary" v-on:click="handleTwitchAuthentication">Link with Twitch</v-btn>
           <br>
-          <v-btn color="primary" @click="currentStep = 3">
+          <v-btn color="primary" v-on:click="setStepper(3)">
             Continue
           </v-btn>
-          <v-btn text @click="currentStep = 1">Previous</v-btn>
+          <v-btn text v-on:click="setStepper(1)">Previous</v-btn>
         </v-stepper-content>
         <v-stepper-content step="3">
           <!-- COMPLETE REGISTRATION -->
           <v-btn color="primary" @click="registerUser">
             Register
           </v-btn>
-          <v-btn text @click="currentStep = 2">Previous</v-btn>
+          <v-btn text v-on:click="setStepper(2)">Previous</v-btn>
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
@@ -54,10 +56,60 @@
 </template>
 
 <style scoped>
+
   .register_user {
     width: 100%;
     height: 100%;
   }
+
+  .stepper_item_text {
+    text-align: center;
+    margin-bottom: 0px !important;
+  }
+
+  .create_credentials_container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: start;
+    flex-direction: row;
+  }
+
+  .create_credentials_info {
+    width: 275px;
+    height: 100%;
+    margin-top: 20px;
+  }
+
+  .create_credentials {
+    width: calc(100% - 295px);
+    height: 100%;
+    margin-left: 20px;
+  }
+
+  .create_credentials_info_card {
+    padding: 10px;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .create_credentials_container {
+      display: unset;
+    }
+
+    .create_credentials_info {
+      width: 100%;
+      height: unset;
+      margin-top: unset;
+      margin-bottom: 20px;
+    }
+
+    .create_credentials {
+      width: 100%;
+      height: unset;
+      margin-left: unset;
+    }
+  }
+
 </style>
 
 <script>
@@ -92,8 +144,12 @@
       }
     },
     methods: {
+      setStepper(stepper) {
+        this.currentStep = stepper;
+        this.$router.push("/register/" + stepper);
+      },
       registerUser() {
-        this.$router.push({name: "Dashboard"});
+        this.$router.push({name: "Login"});
       },
       moveToTwitchLink() {
         if(this.$refs.credentialsForm.validate()) {
@@ -103,6 +159,7 @@
             password: this.password,
             passwordCheck: this.passwordCheck
           }));
+          this.$router.push("/register/2")
         }
       },
       handleTwitchAuthentication() {

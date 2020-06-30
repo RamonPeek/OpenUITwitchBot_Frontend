@@ -5,6 +5,7 @@ import Dashboard from '../views/dashboard/dashboard.vue'
 import Commands from '../views/commands/commands.vue'
 import Settings from '../views/settings/settings.vue'
 import Register from '../views/register/register.vue'
+import Login from '../views/login/login.vue'
 
 Vue.use(VueRouter)
 
@@ -33,6 +34,11 @@ Vue.use(VueRouter)
     path: '/register/:step',
     name: 'Register',
     component: Register
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
   }
 ]
 
@@ -40,6 +46,6 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
-})
+});
 
 export default router

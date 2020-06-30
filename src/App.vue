@@ -184,6 +184,11 @@ export default {
         path: "/settings"
       },
       {
+        icon: "mdi-account",
+        text: "Login",
+        path: "/login"
+      },
+      {
         icon: "mdi-account-multiple-plus",
         text: "Register",
         path: "/register/1"
