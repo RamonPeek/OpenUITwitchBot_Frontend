@@ -216,6 +216,7 @@ export default {
     }
   },
   mounted() {
+    this.$vuetify.theme.dark = true;
     //TEMP FOR DEV, TODO REMOVE LATER
     localStorage.clear();
   }

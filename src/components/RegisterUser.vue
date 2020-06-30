@@ -13,42 +13,60 @@
           <!-- CREATE CREDENTIALS CONTENT -->
           <div class="create_credentials_container">
             <div class="create_credentials_info">
-              <v-card color="#ddd"  class="create_credentials_info_card">
+              <v-card class="create_credentials_info_card">
                 First, we will create credentials with which you will be able to log into the app and start using our services. All data is encrypted and will be stored safely. It is possible to delete your account at all times.
               </v-card>
             </div>
             <div class="create_credentials">
-              <v-form ref="credentialsForm" v-model="validCredentials" lazy-validation>
-                <v-text-field v-model="email" :rules="emailRules" label="E-mail" clearable prepend-icon="mdi-email" required autocomplete="email"></v-text-field>
-                <v-text-field :type="'password'" v-model="password" :rules="passwordRules" label="Password" clearable prepend-icon="mdi-lock" required autocomplete="password"></v-text-field>
-                <v-text-field :type="'password'" v-model="passwordCheck" :rules="passwordCheckRules" label="Password again" clearable prepend-icon="mdi-lock" required autocomplete="passwordCheck"></v-text-field>
-              </v-form>
-              <v-btn color="primary" v-on:click="moveToTwitchLink">
-                Continue
-              </v-btn>
+              <div class="create_credentials_input">
+                <v-form ref="credentialsForm" v-model="validCredentials" lazy-validation>
+                  <v-text-field v-model="email" :rules="emailRules" label="E-mail" clearable prepend-icon="mdi-email" required autocomplete="email"></v-text-field>
+                  <v-text-field :type="'password'" v-model="password" :rules="passwordRules" label="Password" clearable prepend-icon="mdi-lock" required autocomplete="password"></v-text-field>
+                  <v-text-field :type="'password'" v-model="passwordCheck" :rules="passwordCheckRules" label="Password again" clearable prepend-icon="mdi-lock" required autocomplete="passwordCheck"></v-text-field>
+                </v-form>
+              </div>
+              <div class="actions_container">
+                <v-btn color="primary" v-on:click="moveToTwitchLink">
+                  Continue
+                </v-btn>
+              </div>
             </div>
           </div>
         </v-stepper-content>
         <v-stepper-content step="2">
           <!-- LINK TWITCH ACCOUNT-->
-          <div v-if="twitchAuthenticatedAccount">
-            <b><p>Successfully linked to:</p></b>
-            <img :src="twitchAuthenticatedAccount.profile_image_url">
-            <h1>{{twitchAuthenticatedAccount.login}}</h1>
+          <div class="link_twitch_container">
+            <div class="link_twitch_info">
+              <v-card class="link_twitch_info_card">
+                Next, we will connect your Twitch.tv account to your account. The link between Twitch and your account is necessary for retrieving data about your channel. When you delete your account this connection will also be invoked.
+              </v-card>
+            </div>
+            <div class="link_twitch">
+              <div class="link_twitch_input">
+                <v-btn v-if="!twitchAuthenticatedAccount" color="secondary" v-on:click="handleTwitchAuthentication">Link with Twitch</v-btn>
+                <div v-if="twitchAuthenticatedAccount" class="link_twitch_result_container">
+                    <p class="link_twitch_successfully_linked_header">Successfully linked to:</p>
+                    <img :src="twitchAuthenticatedAccount.profile_image_url" class="link_twitch_result_photo">
+                    <p class="link_twitch_result_name">{{twitchAuthenticatedAccount.login}}</p>
+                </div>
+              </div>
+              <div class="actions_container_twitch">
+                <v-btn text v-on:click="setStepper(1)">Previous</v-btn>
+                <v-btn color="primary" v-on:click="setStepper(3)">
+                  Continue
+                </v-btn>
+              </div>
+            </div>
           </div>
-          <v-btn v-if="!twitchAuthenticatedAccount" color="secondary" v-on:click="handleTwitchAuthentication">Link with Twitch</v-btn>
-          <br>
-          <v-btn color="primary" v-on:click="setStepper(3)">
-            Continue
-          </v-btn>
-          <v-btn text v-on:click="setStepper(1)">Previous</v-btn>
         </v-stepper-content>
         <v-stepper-content step="3">
           <!-- COMPLETE REGISTRATION -->
-          <v-btn color="primary" @click="registerUser">
-            Register
-          </v-btn>
-          <v-btn text v-on:click="setStepper(2)">Previous</v-btn>
+          <div class="actions_container">
+            <v-btn text v-on:click="setStepper(2)">Previous</v-btn>
+            <v-btn color="primary" v-on:click="registerUser">
+              Register
+            </v-btn>
+          </div>
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
@@ -67,7 +85,50 @@
     margin-bottom: 0px !important;
   }
 
+  /* CREATE CREDENTIALS */
   .create_credentials_container {
+    width: 100%;
+    height: 100%;
+  }
+
+  .create_credentials_info {
+    width: 275px;
+    height: 100%;
+    float: left;
+  }
+
+  .create_credentials {
+    width: calc(100% - 295px);
+    height: 100%;
+    margin-left: 20px;
+    float: left;
+  }
+
+  .create_credentials_info_card {
+    padding: 10px;
+  }
+
+  .create_credentials_input {
+    height: 210px;
+  }
+
+  .actions_container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .actions_container_twitch {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    margin-left: -20px;
+  }
+
+  /* LINK TWITCH */
+  .link_twitch_container {
     width: 100%;
     height: 100%;
     display: flex;
@@ -75,23 +136,44 @@
     flex-direction: row;
   }
 
-  .create_credentials_info {
+  .link_twitch_info {
     width: 275px;
     height: 100%;
-    margin-top: 20px;
   }
 
-  .create_credentials {
+  .link_twitch {
     width: calc(100% - 295px);
     height: 100%;
     margin-left: 20px;
   }
 
-  .create_credentials_info_card {
+  .link_twitch_info_card {
     padding: 10px;
   }
 
-  @media only screen and (max-width: 600px) {
+  .link_twitch_input {
+    height: 210px;
+  }
+
+  .link_twitch_result_container {
+    width: 100%;
+    height: calc(100% - 20px);
+  }
+
+  .link_twitch_result_photo {
+    width: 106px;
+    height: 106px;
+  }
+
+  .link_twitch_successfully_linked_header {
+    font-weight: bold;
+  }
+
+  .link_twitch_result_name {
+  }
+
+  @media only screen and (max-width: 601px) {
+    /* CREATE CREDENTIALS */
     .create_credentials_container {
       display: unset;
     }
@@ -108,6 +190,41 @@
       height: unset;
       margin-left: unset;
     }
+  }
+
+
+  @media only screen and (max-width: 880px) {
+
+    /* LINK TWITCH */
+    .link_twitch_container {
+      display: unset;
+    }
+
+    .link_twitch_info {
+      width: 100%;
+      height: unset;
+      margin-top: unset;
+      margin-bottom: 20px;
+    }
+
+    .link_twitch {
+      width: 100%;
+      height: unset;
+      margin-left: unset;
+    }
+
+    .link_twitch_result_photo {
+      margin-left: calc(50% - 53px);
+    }
+
+    .link_twitch_successfully_linked_header {
+      text-align: center;
+    }
+
+    .link_twitch_result_name {
+      text-align: center;
+    }
+
   }
 
 </style>
