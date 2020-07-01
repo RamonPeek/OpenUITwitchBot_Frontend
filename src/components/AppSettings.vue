@@ -20,7 +20,29 @@
     },
     methods: {
       setDarkMode() {
-        this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+        let darkMode = sessionStorage.getItem("darkMode");
+        if(darkMode) {
+          if(darkMode === "true") {
+            sessionStorage.setItem("darkMode", "false");
+            this.$vuetify.theme.dark = false;
+          }else{
+            sessionStorage.setItem("darkMode", "true");
+            this.$vuetify.theme.dark = true;
+          }
+        } else {
+          sessionStorage.setItem("darkMode", "false");
+          this.$vuetify.theme.dark = false;
+        }
+      }
+    },
+    mounted() {
+      let darkMode = sessionStorage.getItem("darkMode");
+      if(darkMode) {
+        if(darkMode === "true") {
+          this.darkMode = true;
+        }else{
+          this.darkMode = false;
+        }
       }
     }
   }

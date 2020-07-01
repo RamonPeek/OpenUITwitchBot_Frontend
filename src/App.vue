@@ -216,7 +216,14 @@ export default {
     }
   },
   mounted() {
-    this.$vuetify.theme.dark = true;
+    let darkMode = sessionStorage.getItem("darkMode");
+    if(darkMode) {
+      if(darkMode === "true") {
+        this.$vuetify.theme.dark = true;
+      }else{
+        this.$vuetify.theme.dark = false;
+      }
+    }
   }
 };
 </script>
