@@ -223,6 +223,9 @@ export default {
       }else{
         this.$vuetify.theme.dark = false;
       }
+    }else{
+      sessionStorage.setItem("darkMode", "true");
+      this.$vuetify.theme.dark = true;
     }
   }
 };

@@ -30,8 +30,8 @@
             this.$vuetify.theme.dark = true;
           }
         } else {
-          sessionStorage.setItem("darkMode", "false");
-          this.$vuetify.theme.dark = false;
+          sessionStorage.setItem("darkMode", "true");
+          this.$vuetify.theme.dark = true;
         }
       }
     },
