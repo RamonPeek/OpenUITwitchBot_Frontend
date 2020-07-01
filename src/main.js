@@ -22,7 +22,8 @@ const store = new Vuex.Store({
 
 router.beforeEach((to, from, next) => {
   if(from.name === "Register" && to.name !== "Register") {
-    sessionStorage.removeItem("registerCredentialsMemory")
+    localStorage.removeItem("registerCredentialsMemory");
+    localStorage.removeItem("twitchAuth");
     next();
   }else{
     next();

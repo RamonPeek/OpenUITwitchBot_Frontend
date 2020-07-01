@@ -33,7 +33,7 @@ Vue.use(VueRouter)
   {
     path: '/register/:step',
     name: 'Register',
-    component: Register
+    component: Register,
   },
   {
     path: '/login',

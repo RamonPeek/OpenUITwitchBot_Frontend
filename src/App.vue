@@ -50,7 +50,7 @@
     <!-- SITE CONTENT -->
     <v-main app>
       <transition name="fade" mode="out-in">
-        <router-view></router-view>
+        <router-view :key="$route.fullPath"></router-view>
       </transition>
     </v-main>
   </v-app>
@@ -217,8 +217,6 @@ export default {
   },
   mounted() {
     this.$vuetify.theme.dark = true;
-    //TEMP FOR DEV, TODO REMOVE LATER
-    localStorage.clear();
   }
 };
 </script>

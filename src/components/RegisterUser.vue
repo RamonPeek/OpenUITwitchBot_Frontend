@@ -24,7 +24,10 @@
             </v-form>
           </div>
           <div class="actions_container">
-            <v-btn color="primary" v-on:click="moveToTwitchLink">
+            <v-btn color="primary" v-on:click="setStepper(2)" v-if="!validCredentials || !email || !password || !passwordCheck" disabled>
+              Continue
+            </v-btn>
+            <v-btn color="primary" v-on:click="setStepper(2)" v-if="validCredentials && email && password && passwordCheck">
               Continue
             </v-btn>
           </div>
@@ -50,7 +53,10 @@
           </div>
           <div class="actions_container">
             <v-btn text v-on:click="setStepper(1)">Previous</v-btn>
-            <v-btn color="primary" v-on:click="setStepper(3)">
+            <v-btn color="primary" v-on:click="setStepper(3)" v-if="!twitchAuthenticatedAccount || !validCredentials" disabled>
+              Continue
+            </v-btn>
+            <v-btn color="primary" v-on:click="setStepper(3)" v-if="twitchAuthenticatedAccount && validCredentials">
               Continue
             </v-btn>
           </div>
@@ -177,7 +183,7 @@
     data () {
       return {
         currentStep: this.step,
-        validCredentials: true,
+        validCredentials: false,
         email: "",
         emailRules: [
           v => !!v || 'E-mail is required',
@@ -197,6 +203,35 @@
         registerMemory: null
       }
     },
+    watch: {
+      email: function(val) {
+        if (val) {
+          localStorage.setItem("registerCredentialsMemory", JSON.stringify({
+            email: this.email,
+            password: this.password,
+            passwordCheck: this.passwordCheck
+          }));
+        }
+      },
+      password: function(val) {
+        if (val) {
+          localStorage.setItem("registerCredentialsMemory", JSON.stringify({
+            email: this.email,
+            password: this.password,
+            passwordCheck: this.passwordCheck
+          }));
+        }
+      },
+      passwordCheck: function(val) {
+        if (val) {
+          localStorage.setItem("registerCredentialsMemory", JSON.stringify({
+            email: this.email,
+            password: this.password,
+            passwordCheck: this.passwordCheck
+          }));
+        }
+      }
+    },
     methods: {
       setStepper(stepper) {
         this.currentStep = stepper;
@@ -204,17 +239,6 @@
       },
       registerUser() {
         this.$router.push({name: "Login"});
-      },
-      moveToTwitchLink() {
-        if(this.$refs.credentialsForm.validate()) {
-          this.currentStep = 2;
-          sessionStorage.setItem("registerCredentialsMemory", JSON.stringify({
-            email: this.email,
-            password: this.password,
-            passwordCheck: this.passwordCheck
-          }));
-          this.$router.push("/register/2")
-        }
       },
       handleTwitchAuthentication() {
         let clientId = process.env.VUE_APP_TWITCH_PUBLIC_CLIENT_ID;
@@ -224,7 +248,7 @@
       }
     },
     created() {
-      this.registerMemory = JSON.parse(sessionStorage.getItem("registerCredentialsMemory"));
+      this.registerMemory = JSON.parse(localStorage.getItem("registerCredentialsMemory"));
       if(this.registerMemory) {
         this.email = this.registerMemory.email;
         this.password = this.registerMemory.password;
@@ -235,13 +259,71 @@
       if(localStorage.getItem("twitchAuth")) {
         twitchService.getUserByBearer(localStorage.getItem("twitchAuth")).then(response => {
           this.twitchAuthenticatedAccount = response.data.data[0];
+          console.warn(this.currentStep);
+          if(this.currentStep === "1") {
+            //FIRST PAGE MAY ALWAYS BE ACCESSED
+          }else if(this.currentStep === "2") {
+            //SECOND PAGE MAY ONLY BE ACCESSED IF FIRST ONE IS VALID
+            if(!this.$refs.credentialsForm.validate()) {
+              this.$router.push({name: "Register", params: { step: "1" }});
+            }
+          }else if(this.currentStep === "3") {
+            //LAST PAGE MAY ONLY BE ACCESSED IF FIRST AND SECOND ONES ARE VALID
+            if(!this.$refs.credentialsForm.validate()) {
+              this.$router.push({name: "Register", params: { step: "1" }});
+            }else{
+              if(!this.twitchAuthenticatedAccount) {
+                this.$router.push({name: "Register", params: { step: "2" }});
+              }
+            }
+          }
         });
       }else{
         let accessToken = this.$router.currentRoute.hash.split("&")[0].substr(14, this.$router.currentRoute.hash.length);
         if(accessToken) {
           twitchService.getUserByBearer(accessToken).then(response => {
             this.twitchAuthenticatedAccount = response.data.data[0];
+            console.warn(this.currentStep);
+            if(this.currentStep === "1") {
+              //FIRST PAGE MAY ALWAYS BE ACCESSED
+            }else if(this.currentStep === "2") {
+              //SECOND PAGE MAY ONLY BE ACCESSED IF FIRST ONE IS VALID
+              if(!this.$refs.credentialsForm.validate()) {
+                this.$router.push({name: "Register", params: { step: "1" }});
+
+              }
+            }else if(this.currentStep === "3") {
+              //LAST PAGE MAY ONLY BE ACCESSED IF FIRST AND SECOND ONES ARE VALID
+              if(!this.$refs.credentialsForm.validate()) {
+                this.$router.push({name: "Register", params: { step: "1" }});
+
+              }else{
+                if(!this.twitchAuthenticatedAccount) {
+                  this.$router.push({name: "Register", params: { step: "2" }});
+                }
+              }
+            }
           });
+        }else{
+          if(this.currentStep === "1") {
+            //FIRST PAGE MAY ALWAYS BE ACCESSED
+          }else if(this.currentStep === "2") {
+            //SECOND PAGE MAY ONLY BE ACCESSED IF FIRST ONE IS VALID
+            if(!this.$refs.credentialsForm.validate()) {
+              this.$router.push({name: "Register", params: { step: "1" }});
+
+            }
+          }else if(this.currentStep === "3") {
+            //LAST PAGE MAY ONLY BE ACCESSED IF FIRST AND SECOND ONES ARE VALID
+            if(!this.$refs.credentialsForm.validate()) {
+              this.$router.push({name: "Register", params: { step: "1" }});
+
+            }else{
+              if(!this.twitchAuthenticatedAccount) {
+                this.$router.push({name: "Register", params: { step: "2" }});
+              }
+            }
+          }
         }
       }
     },
