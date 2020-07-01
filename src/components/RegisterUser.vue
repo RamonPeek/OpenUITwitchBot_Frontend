@@ -188,7 +188,7 @@
         validCredentials: false,
         email: "",
         emailRules: [
-          v => !!v || 'E-mail is required',
+          v => !!v || 'E-mail is required.',
           v => /.+@.+\..+/.test(v) || 'E-mail must be valid.',
         ],
         password: "",
@@ -260,8 +260,8 @@
           }
         }).then(response => {
           console.warn(response);
+          this.$router.push({name: "Login"});
         });
-        this.$router.push({name: "Login"});
       },
       handleTwitchAuthentication() {
         let clientId = process.env.VUE_APP_TWITCH_PUBLIC_CLIENT_ID;
@@ -283,7 +283,6 @@
         this.twitchOAuth = localStorage.getItem("twitchAuth");
         twitchService.getUserByBearer(localStorage.getItem("twitchAuth")).then(response => {
           this.twitchAuthenticatedAccount = response.data.data[0];
-          console.warn(this.currentStep);
           if(this.currentStep === "1") {
             //FIRST PAGE MAY ALWAYS BE ACCESSED
           }else if(this.currentStep === "2") {
@@ -308,7 +307,6 @@
           this.twitchOAuth = accessToken;
           twitchService.getUserByBearer(accessToken).then(response => {
             this.twitchAuthenticatedAccount = response.data.data[0];
-            console.warn(this.currentStep);
             if(this.currentStep === "1") {
               //FIRST PAGE MAY ALWAYS BE ACCESSED
             }else if(this.currentStep === "2") {
