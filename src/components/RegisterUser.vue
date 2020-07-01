@@ -174,8 +174,10 @@
 
 <script>
   import TwitchService from "../services/TwitchService";
+  import UserService from "../services/UserService";
 
   let twitchService = new TwitchService();
+  let userService = new UserService();
 
   export default {
     name: 'RegisterUser',
@@ -200,6 +202,7 @@
           v => v === this.password || 'The passwords must match.'
         ],
         twitchAuthenticatedAccount: null,
+        twitchOAuth: null,
         registerMemory: null
       }
     },
@@ -238,6 +241,26 @@
         this.$router.push("/register/" + stepper);
       },
       registerUser() {
+        userService.createUser({
+          user: {
+            //TODO GENERATE RANDOM ID ON BACKEND??
+            id: "qwertyuiop",
+            twitchAccount: {
+              id: this.twitchAuthenticatedAccount.id,
+              oAuthToken: this.twitchOAuth,
+              displayName: this.twitchAuthenticatedAccount.display_name,
+              description: this.twitchAuthenticatedAccount.description,
+              profileImageUrl: this.twitchAuthenticatedAccount.profile_image_url,
+              viewCount: this.twitchAuthenticatedAccount.view_count
+            }
+          },
+          credentials: {
+            email: this.email,
+            password: this.password
+          }
+        }).then(response => {
+          console.warn(response);
+        });
         this.$router.push({name: "Login"});
       },
       handleTwitchAuthentication() {
@@ -257,6 +280,7 @@
     },
     mounted() {
       if(localStorage.getItem("twitchAuth")) {
+        this.twitchOAuth = localStorage.getItem("twitchAuth");
         twitchService.getUserByBearer(localStorage.getItem("twitchAuth")).then(response => {
           this.twitchAuthenticatedAccount = response.data.data[0];
           console.warn(this.currentStep);
@@ -272,7 +296,7 @@
             if(!this.$refs.credentialsForm.validate()) {
               this.$router.push({name: "Register", params: { step: "1" }});
             }else{
-              if(!this.twitchAuthenticatedAccount) {
+              if(!this.twitchAuthenticatedAccount || !this.twitchOAuth) {
                 this.$router.push({name: "Register", params: { step: "2" }});
               }
             }
@@ -281,6 +305,7 @@
       }else{
         let accessToken = this.$router.currentRoute.hash.split("&")[0].substr(14, this.$router.currentRoute.hash.length);
         if(accessToken) {
+          this.twitchOAuth = accessToken;
           twitchService.getUserByBearer(accessToken).then(response => {
             this.twitchAuthenticatedAccount = response.data.data[0];
             console.warn(this.currentStep);
@@ -298,7 +323,7 @@
                 this.$router.push({name: "Register", params: { step: "1" }});
 
               }else{
-                if(!this.twitchAuthenticatedAccount) {
+                if(!this.twitchAuthenticatedAccount || !this.twitchOAuth) {
                   this.$router.push({name: "Register", params: { step: "2" }});
                 }
               }

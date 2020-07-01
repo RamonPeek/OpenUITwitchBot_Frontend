@@ -22,7 +22,7 @@ export default class BotService {
     }
 
     getClient() {
-        var client = tmi.client(this.options);
+        let client = tmi.client(this.options);
         return client;
     }
 }

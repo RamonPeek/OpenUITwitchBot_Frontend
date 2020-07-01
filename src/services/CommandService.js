@@ -9,7 +9,7 @@ export default class CommandService {
     }
 
     getCommandById(commandId) {
-        return Axios.get(api_base_url + "/command", null, {
+        return Axios.get(api_base_url + "/command", {
             params: {
                 commandId: commandId
             }
@@ -25,7 +25,7 @@ export default class CommandService {
     }
 
     deleteCommand(commandId) {
-        return Axios.delete(api_base_url + "/command", null, {
+        return Axios.delete(api_base_url + "/command", {
             params: {
                 commandId: commandId
             }
