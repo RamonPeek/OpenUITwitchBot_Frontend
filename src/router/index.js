@@ -6,6 +6,7 @@ import Commands from '../views/commands/commands.vue'
 import Settings from '../views/settings/settings.vue'
 import Register from '../views/register/register.vue'
 import Login from '../views/login/login.vue'
+import Logout from '../views/logout/logout.vue'
 
 Vue.use(VueRouter)
 
@@ -39,6 +40,11 @@ Vue.use(VueRouter)
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/logout',
+    name: 'Logout',
+    component: Logout
   }
 ]
 

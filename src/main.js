@@ -51,6 +51,33 @@ Axios.interceptors.request.use(config => {
   return config;
 })
 
+/* Automatically log the user off when the token is expired or not valid */
+//IF THE TOKEN IS EXPIRED, AUTOMATICALLY LOGOUT USER
+Axios.interceptors.response.use((response) => {
+  return response;
+}, (error) => {
+  if (!error.response) {
+    //TODO Show error
+  } else {
+    if(error.response.config.url.includes(process.env.VUE_APP_ROOT_API)) {
+      if (error.response.status === 401) {
+        // UNAUTHORIZED (Because token is no longer valid, so redirect user to logout to remove invalid token)
+        if(router.currentRoute.name !== "Login") {
+          //TODO SHOW ERROR WHICH SHOWS THAT SESSION HAS EXPIRED
+          router.push({name: "Logout"});
+        }else{
+          //TODO SHOW ERROR OF INCORRECT CREDENTIALS
+        }
+      }
+    }else if(error.response.config.url.includes("https://api.twitch.tv/helix")) {
+      //TODO REDIRECT TO RE-AUTH WITH TWITCH PAGE
+      console.warn("Re-auth with Twitch");
+    }
+
+  }
+  return Promise.resolve({ error });
+});
+
 /* Initialize app */
 new Vue({
   vuetify,
