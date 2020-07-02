@@ -43,23 +43,27 @@ const store = new Vuex.Store({
 
 /* Execute before each route-change */
 router.beforeEach((to, from, next) => {
+  //Remove temporarily store register credentials when navigating away from the register-component
   if(from.name === "Register" && to.name !== "Register") {
     localStorage.removeItem("registerCredentialsMemory");
     localStorage.removeItem("twitchAuth");
     next();
   }else{
+    //Component requires authentication
     if(!whiteListedRoutes.includes(to.name)) {
       if(sessionStorage.getItem("appAuthToken")) {
         authService.validate().then(response => {
           if(response.status === 401) {
             next({name: "Logout"});
           }else{
+            to.params["currentUserId"] = response.data;
             next();
           }
         });
       }else{
         next({name: "Logout"});
       }
+    //Component does not requires authentication
     }else{
       if(to.name === "Login") {
         if(sessionStorage.getItem("appAuthToken")) {

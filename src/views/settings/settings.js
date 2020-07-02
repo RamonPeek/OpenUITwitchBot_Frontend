@@ -9,11 +9,10 @@ export default {
   props: [],
   data () {
     return {
-
+      //currentUserId: this.$router.currentRoute.params.currentUserId
     }
   },
   computed: {
-
   },
   mounted () {
 
