@@ -190,7 +190,7 @@ export default {
       {
         icon: "mdi-home",
         text: "Dashboard",
-        path: "/",
+        path: "/dashboard",
         loginRequired: true
       },
       {
