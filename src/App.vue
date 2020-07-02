@@ -4,21 +4,21 @@
     <v-app-bar app>
       <v-app-bar-nav-icon v-if="isMobile()" v-on:click="toggleMobileMenu()" class="hamburger_icon_container"></v-app-bar-nav-icon>
       <div class="top_menu_container">
-        <div v-if="$store.getters.loggedIn" v-on:click="changeComponent('/placeholder')" class="profile_item_container">
+        <div v-if="$store.getters.loggedIn && $store.getters.currentUser" v-on:click="changeComponent('/placeholder')" class="profile_item_container">
           <v-avatar size="36px" class="profile_photo">
-            <img v-bind:src="currentUser.twitchAccount.profileImageUrl">
+            <img v-bind:src="$store.getters.currentUser.twitchAccount.profileImageUrl">
           </v-avatar>
-          <div class="username">{{currentUser.twitchAccount.displayName}}</div>
+          <div class="username">{{$store.getters.currentUser.twitchAccount.displayName}}</div>
           <v-icon>mdi-chevron-down</v-icon>
         </div>
       </div>
     </v-app-bar>
-    <!-- SIDE NAVIGATION --> 
+    <!-- SIDE NAVIGATION -->
     <v-navigation-drawer app>
       <v-list dense>
         <v-subheader>Quick navigation</v-subheader>
         <!-- SIDE NAVIGATION ITEMS WHEN LOGGED-IN -->
-        <v-list-item-group color="primary" v-if="$store.getters.loggedIn">
+        <v-list-item-group color="primary" v-if="$store.getters.loggedIn === true">
           <v-list-item v-for="item in loggedInNavigationItems" :key="item.index" :to="item.path" v-on:click="disabledMobileMenu()">
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
@@ -29,7 +29,7 @@
           </v-list-item>
         </v-list-item-group>
         <!-- SIDE NAVIGATION ITEMS WHEN NOT LOGGED-IN -->
-        <v-list-item-group color="primary" v-if="!$store.getters.loggedIn">
+        <v-list-item-group color="primary" v-if="$store.getters.loggedIn === false">
           <v-list-item v-for="item in notLoggedInNavigationItems" :key="item.index" :to="item.path" v-on:click="disabledMobileMenu()">
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
@@ -48,10 +48,20 @@
     <transition name="fade-fast">
       <div class="mobile_menu_container" v-if="mobileMenu && isMobile()">
         <v-list dense>
-        <v-list-item-group color="primary">
-          <v-list-item v-for="item in sideNavigationItems" :key="item.index" :to="item.path" v-on:click="disabledMobileMenu()">
+        <v-list-item-group color="primary" v-if="$store.getters.loggedIn === true">
+          <v-list-item v-for="item in loggedInNavigationItems" :key="item.index" :to="item.path" v-on:click="disabledMobileMenu()">
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title v-text="item.text"></v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+          <v-list-item-group color="primary" v-if="$store.getters.loggedIn === false">
+            <v-list-item v-for="item in notLoggedInNavigationItems" :key="item.index" :to="item.path" v-on:click="disabledMobileMenu()">
+              <v-list-item-icon>
+                <v-icon v-text="item.icon"></v-icon>
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title v-text="item.text"></v-list-item-title>
@@ -175,10 +185,8 @@
 
 <script>
 import AuthService from "./services/AuthService";
-import UserService from "./services/UserService";
 
 let authService = new AuthService();
-let userService = new UserService();
 
 export default {
   name: 'App',
@@ -253,7 +261,7 @@ export default {
       this.mobileMenu = false;
     },
     isMobile() {
-      var mobile = this.$vuetify.breakpoint.width < this.$vuetify.breakpoint.mobileBreakpoint;
+      let mobile = this.$vuetify.breakpoint.width < this.$vuetify.breakpoint.mobileBreakpoint;
       if(!mobile) {
         this.mobileMenu = false;
       }
@@ -274,9 +282,6 @@ export default {
       authService.validate().then(response => {
         if(response.status === 200) {
           this.$store.dispatch("setLoggedIn", true);
-          userService.getUserById(response.data).then(userResponse => {
-            this.currentUser = userResponse.data;
-          })
         }
       });
     }

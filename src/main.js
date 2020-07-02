@@ -22,21 +22,31 @@ let whiteListedRoutes = [
 /* Define constants */
 const store = new Vuex.Store({
   state: {
-    loggedIn: false
+    loggedIn: false,
+    currentUser: null
   },
   mutations: {
     setLoggedIn(state, loginState) {
       state.loggedIn = loginState;
+    },
+    setCurrentUser(state, user) {
+      state.currentUser = user;
     }
   },
   actions: {
     setLoggedIn(state, loginState) {
       state.commit("setLoggedIn", loginState);
+    },
+    setCurrentUser(state, user) {
+      state.commit("setCurrentUser", user);
     }
   },
   getters: {
     loggedIn(state) {
       return state.loggedIn;
+    },
+    currentUser(state) {
+      return state.currentUser;
     }
   }
 })
@@ -56,7 +66,6 @@ router.beforeEach((to, from, next) => {
           if(response.status === 401) {
             next({name: "Logout"});
           }else{
-            to.params["currentUserId"] = response.data;
             next();
           }
         });
