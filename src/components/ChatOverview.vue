@@ -108,7 +108,7 @@
       //TODO REPLACE WITH COMMANDS PER CHANNEL (USER)
       commandService.getAllCommands().then(commandsResponse => {
         this.activeCommands = commandsResponse.data;
-      })
+      });
     }
   }
 </script>

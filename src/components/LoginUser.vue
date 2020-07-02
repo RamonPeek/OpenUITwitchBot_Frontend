@@ -98,15 +98,22 @@
           email: this.email,
           password: this.password
         }).then(response => {
-          sessionStorage.setItem("appAuthToken", response.data.token);
-          authService.validate().then(userIdResponse => {
-            userService.getUserById(userIdResponse.data).then(userResponse => {
-              sessionStorage.setItem("twitchAuthToken", userResponse.data.twitchAccount.oAuthToken);
-              this.$store.dispatch("setLoggedIn", true);
-              this.$store.dispatch("setCurrentUser", userResponse.data);
-              this.$router.push({name: "Dashboard"});
+          if(response.status === 200) {
+            sessionStorage.setItem("appAuthToken", response.data.token);
+            authService.validate().then(userIdResponse => {
+              userService.getUserById(userIdResponse.data).then(userResponse => {
+                sessionStorage.setItem("twitchAuthToken", userResponse.data.twitchAccount.oAuthToken);
+                this.$store.dispatch("setLoggedIn", true);
+                this.$store.dispatch("setCurrentUser", userResponse.data);
+                this.$toast.open({
+                  message: 'Successfully logged in.',
+                  type: 'success',
+                  duration: 2500,
+                });
+                this.$router.push({name: "Dashboard"});
+              });
             });
-          });
+          }
         });
       }
     },

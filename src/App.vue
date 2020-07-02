@@ -81,6 +81,10 @@
 </template>
 
 <style>
+  body {
+    font-family: "Roboto", sans-serif !important;
+  }
+
   .app {
     -ms-overflow-style: none;
     scrollbar-width: none;

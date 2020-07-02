@@ -13,6 +13,16 @@ Vue.use(VueRouter)
   const routes = [
   {
     path: '/',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard
   },
@@ -37,14 +47,13 @@ Vue.use(VueRouter)
     component: Register,
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: Login
-  },
-  {
     path: '/logout',
     name: 'Logout',
     component: Logout
+  },
+  {
+    path: '*',
+    component: Dashboard
   }
 ]
 

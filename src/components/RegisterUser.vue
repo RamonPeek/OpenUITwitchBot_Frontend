@@ -259,6 +259,11 @@
             password: this.password
           }
         }).then(() => {
+          this.$toast.open({
+            message: 'Successfully created your account.',
+            type: 'success',
+            duration: 2500,
+          });
           this.$router.push({name: "Login"});
         });
       },
