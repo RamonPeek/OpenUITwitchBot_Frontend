@@ -64,8 +64,10 @@
   import AppSettings from '../../app_settings.json';
   import Command from '../models/Command';
   import $ from 'jquery';
+  import CommandService from '../services/CommandService';
 
-  var bot = new BotService(AppSettings.bot_username, AppSettings.bot_oauth, AppSettings.bot_channels);
+  let commandService = new CommandService();
+  let bot = new BotService(AppSettings.bot_username, AppSettings.bot_oauth, AppSettings.bot_channels);
 
   export default {
     name: 'ChatOverview',
@@ -74,6 +76,7 @@
       return {
         client: null,
         receivedCommands: [],
+        activeCommands: []
       }
     },
     created: function() {
@@ -86,23 +89,26 @@
       initializeBot() {
         this.client = bot.getClient();
 
-        this.client.on("message", (target, context, message, self) => {
+        this.client.on("message", (target, context, message) => {
           var command = new Command(context.username, message, new Date());
-          console.log(context);
-          console.log(target);
-          console.log(self);
-          if(message.startsWith("!")) {
-            this.receivedCommands.push(command);
-            $("#command_chips_container").animate({ scrollTop: $('#command_chips_container')[0].scrollHeight}, 500);
-              //console.warn(context.username)
-              //client.action(TwitchSettings.bot_username, context.username + " executed command: " + message);
-          }
+          this.activeCommands.forEach(element => {
+            if(element.tag === message) {
+              this.receivedCommands.push(command);
+              $("#command_chips_container").animate({ scrollTop: $('#command_chips_container')[0].scrollHeight}, 500);
+            }
+          });
         });
         this.client.connect();
       },
       destroyBot() {
         this.client.disconnect();
       }
+    },
+    mounted() {
+      //TODO REPLACE WITH COMMANDS PER CHANNEL (USER)
+      commandService.getAllCommands().then(commandsResponse => {
+        this.activeCommands = commandsResponse.data;
+      })
     }
   }
 </script>
