@@ -2,14 +2,16 @@
   <v-app class="app" >
     <!-- TOP NAVIGATION -->
     <v-app-bar app>
-      <v-app-bar-nav-icon v-if="isMobile()" v-on:click="toggleMobileMenu()"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon v-if="isMobile()" v-on:click="toggleMobileMenu()" class="hamburger_icon_container"></v-app-bar-nav-icon>
+      <div class="top_menu_container">
         <div v-if="$store.getters.loggedIn" v-on:click="changeComponent('/placeholder')" class="profile_item_container">
           <v-avatar size="36px" class="profile_photo">
-            <img v-bind:src="activeUser.profilePhoto">
+            <img v-bind:src="currentUser.twitchAccount.profileImageUrl">
           </v-avatar>
-          <div class="username">{{activeUser.username}}</div>
+          <div class="username">{{currentUser.twitchAccount.displayName}}</div>
           <v-icon>mdi-chevron-down</v-icon>
         </div>
+      </div>
     </v-app-bar>
     <!-- SIDE NAVIGATION --> 
     <v-navigation-drawer app>
@@ -73,15 +75,26 @@
     -ms-overflow-style: none;
   }
 
+  .top_menu_container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    float: left;
+    margin-top: calc(1px - 0.1vw);
+  }
+
+  .hamburger_icon_container {
+    width: 50px;
+    float: left;
+  }
+
   .profile_photo {
     margin-right: 10px;
   }
 
   .profile_item_container {
-    margin-right: 0px !important;
     display: flex;
     justify-content: start;
-    margin-left: calc(100% - 150px);
   }
 
   .profile_item_container:hover {
@@ -130,11 +143,6 @@
     opacity: 0.7;
   }
 
-  @media only screen and (max-width: 1263px) {
-    .profile_item_container {
-      margin-left: calc(100% - 180px);
-    }
-  }
 
   /* ROUTER TRANSITION EFFECT */
   .fade-enter-active,
@@ -167,8 +175,10 @@
 
 <script>
 import AuthService from "./services/AuthService";
+import UserService from "./services/UserService";
 
 let authService = new AuthService();
+let userService = new UserService();
 
 export default {
   name: 'App',
@@ -177,10 +187,7 @@ export default {
   },
 
   data: () => ({
-    activeUser: {
-      "username": "RamonPeek",
-      "profilePhoto": "https://personalportfolio-2adb0.firebaseapp.com/profile_picture.png"
-    },
+    currentUser: null,
     mobileMenu: false,
     sideNavigationItems: [
       {
@@ -267,6 +274,9 @@ export default {
       authService.validate().then(response => {
         if(response.status === 200) {
           this.$store.dispatch("setLoggedIn", true);
+          userService.getUserById(response.data).then(userResponse => {
+            this.currentUser = userResponse.data;
+          })
         }
       });
     }
