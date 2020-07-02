@@ -70,8 +70,10 @@
 <script>
 
   import AuthService from '../services/AuthService';
+  import UserService from '../services/UserService'
 
   let authService = new AuthService();
+  let userService = new UserService();
 
   export default {
     name: 'LoginUser',
@@ -97,7 +99,13 @@
           password: this.password
         }).then(response => {
           sessionStorage.setItem("appAuthToken", response.data.token);
-          this.$router.push({name: "Dashboard"});
+          authService.validate().then(userIdResponse => {
+            userService.getUserById(userIdResponse.data).then(userResponse => {
+              console.warn(userResponse.data.twitchAccount.oAuthToken)
+              sessionStorage.setItem("twitchAuthToken", userResponse.data.twitchAccount.oAuthToken);
+              this.$router.push({name: "Dashboard"});
+            });
+          });
         });
       }
     },

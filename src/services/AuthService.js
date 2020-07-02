@@ -7,4 +7,8 @@ export default class UserService {
     authenticate(credentials) {
         return Axios.post(api_base_url + "/auth", credentials);
     }
+
+    validate() {
+        return Axios.post(api_base_url + "/auth/validate");
+    }
 }

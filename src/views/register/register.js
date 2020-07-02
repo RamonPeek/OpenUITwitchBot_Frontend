@@ -25,7 +25,6 @@ export default {
         this.saveTwitchTokenAndScope();
       }else {
         //TODO DISPLAY ERROR ON FRONTEND
-        console.error("FAILED TO LINK");
       }
     }
   },
