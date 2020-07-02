@@ -192,6 +192,11 @@ export default {
         icon: "mdi-account-multiple-plus",
         text: "Register",
         path: "/register/1"
+      },
+      {
+        icon: "mdi-logout",
+        text: "Logout",
+        path: "/logout"
       }
     ]
   }),

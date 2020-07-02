@@ -4,11 +4,20 @@ import vuetify from './plugins/vuetify'
 import router from './router'
 import Vuex from 'vuex'
 import Axios from 'axios'
+import AuthService from './services/AuthService';
+
+let authService = new AuthService();
 
 Vue.config.productionTip = false
 
 /* Global methods and constants */
 Vue.use(Vuex)
+
+let whiteListedRoutes = [
+  "Login",
+  "Register",
+  "Logout"
+]
 
 /* Define constants */
 const store = new Vuex.Store({
@@ -29,8 +38,81 @@ router.beforeEach((to, from, next) => {
     localStorage.removeItem("twitchAuth");
     next();
   }else{
+    if(!whiteListedRoutes.includes(to.name)) {
+      if(sessionStorage.getItem("appAuthToken")) {
+        authService.validate().then(response => {
+          if(response.status === 401) {
+            next({name: "Logout"});
+          }else{
+            next();
+          }
+        });
+      }else{
+        next({name: "Logout"});
+      }
+    }else{
+      if(to.name === "Login") {
+        if(sessionStorage.getItem("appAuthToken")) {
+          authService.validate().then(response => {
+            if(response.status === 401) {
+              next({name: "Logout"});
+            }else{
+              next({name: "Dashboard"});
+            }
+          });
+        }else{
+          next();
+        }
+      }else if(to.name === "Register") {
+        if(sessionStorage.getItem("appAuthToken")) {
+          authService.validate().then(response => {
+            if(response.status === 401) {
+              next({name: "Logout"});
+            }else{
+              next({name: "Dashboard"});
+            }
+          });
+        }else{
+          next();
+        }
+      }else{
+        next();
+      }
+    }
+  }
+  /*
+  if(from.name === "Register" && to.name !== "Register") {
+    localStorage.removeItem("registerCredentialsMemory");
+    localStorage.removeItem("twitchAuth");
     next();
   }
+  if(!whiteListedRoutes.includes(to.name)) {
+    if(sessionStorage.getItem("appAuthToken")) {
+      authService.validate().then(response => {
+        if(response.status === 401) {
+          next({name: "Logout"});
+        }else{
+          next();
+        }
+      });
+    }else{
+      next({name: "Logout"});
+    }
+  }else{
+    if(sessionStorage.getItem("appAuthToken")) {
+      if(to.name === "Login") {
+        next({name: "Dashboard"});
+      }else if(to.name === "Register") {
+        next({name: "Dashboard"});
+      }else{
+        next();
+      }
+    }else{
+      next();
+    }
+
+  }*/
+  next();
 });
 
 /* Automatically add auth-tokens if possible */
@@ -52,7 +134,6 @@ Axios.interceptors.request.use(config => {
 })
 
 /* Automatically log the user off when the token is expired or not valid */
-//IF THE TOKEN IS EXPIRED, AUTOMATICALLY LOGOUT USER
 Axios.interceptors.response.use((response) => {
   return response;
 }, (error) => {
