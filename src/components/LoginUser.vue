@@ -103,6 +103,7 @@
             userService.getUserById(userIdResponse.data).then(userResponse => {
               console.warn(userResponse.data.twitchAccount.oAuthToken)
               sessionStorage.setItem("twitchAuthToken", userResponse.data.twitchAccount.oAuthToken);
+              this.$store.dispatch("setLoggedIn", true);
               this.$router.push({name: "Dashboard"});
             });
           });

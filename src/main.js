@@ -22,11 +22,21 @@ let whiteListedRoutes = [
 /* Define constants */
 const store = new Vuex.Store({
   state: {
-    count: 0
+    loggedIn: false
   },
   mutations: {
-    increment (state) {
-      state.count++
+    setLoggedIn(state, loginState) {
+      state.loggedIn = loginState;
+    }
+  },
+  actions: {
+    setLoggedIn(state, loginState) {
+      state.commit("setLoggedIn", loginState);
+    }
+  },
+  getters: {
+    loggedIn(state) {
+      return state.loggedIn;
     }
   }
 })

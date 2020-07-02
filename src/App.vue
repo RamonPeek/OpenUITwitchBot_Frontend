@@ -3,7 +3,7 @@
     <!-- TOP NAVIGATION -->
     <v-app-bar app>
       <v-app-bar-nav-icon v-if="isMobile()" v-on:click="toggleMobileMenu()"></v-app-bar-nav-icon>
-        <div v-on:click="changeComponent('/placeholder')" class="profile_item_container">
+        <div v-if="$store.getters.loggedIn" v-on:click="changeComponent('/placeholder')" class="profile_item_container">
           <v-avatar size="36px" class="profile_photo">
             <img v-bind:src="activeUser.profilePhoto">
           </v-avatar>
@@ -14,11 +14,23 @@
     <!-- SIDE NAVIGATION --> 
     <v-navigation-drawer app>
       <v-list dense>
-      <v-subheader>Quick navigation</v-subheader>
-      <v-list-item-group color="primary">
-        <v-list-item v-for="item in sideNavigationItems" :key="item.index" :to="item.path" v-on:click="disabledMobileMenu()">
-          <v-list-item-icon>
-            <v-icon v-text="item.icon"></v-icon>
+        <v-subheader>Quick navigation</v-subheader>
+        <!-- SIDE NAVIGATION ITEMS WHEN LOGGED-IN -->
+        <v-list-item-group color="primary" v-if="$store.getters.loggedIn">
+          <v-list-item v-for="item in loggedInNavigationItems" :key="item.index" :to="item.path" v-on:click="disabledMobileMenu()">
+            <v-list-item-icon>
+              <v-icon v-text="item.icon"></v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title v-text="item.text"></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+        <!-- SIDE NAVIGATION ITEMS WHEN NOT LOGGED-IN -->
+        <v-list-item-group color="primary" v-if="!$store.getters.loggedIn">
+          <v-list-item v-for="item in notLoggedInNavigationItems" :key="item.index" :to="item.path" v-on:click="disabledMobileMenu()">
+            <v-list-item-icon>
+              <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title v-text="item.text"></v-list-item-title>
@@ -154,6 +166,9 @@
 </style>
 
 <script>
+import AuthService from "./services/AuthService";
+
+let authService = new AuthService();
 
 export default {
   name: 'App',
@@ -171,35 +186,61 @@ export default {
       {
         icon: "mdi-home",
         text: "Dashboard",
-        path: "/"
+        path: "/",
+        loginRequired: true
       },
       {
         icon: "mdi-clipboard-alert",
         text: "Commands",
-        path: "/commands"
+        path: "/commands",
+        loginRequired: true
       },
       {
         icon: "mdi-cog",
         text: "Settings",
-        path: "/settings"
+        path: "/settings",
+        loginRequired: true
       },
       {
         icon: "mdi-account",
         text: "Login",
-        path: "/login"
+        path: "/login",
+        loginRequired: false
       },
       {
         icon: "mdi-account-multiple-plus",
         text: "Register",
-        path: "/register/1"
+        path: "/register/1",
+        loginRequired: false
       },
       {
         icon: "mdi-logout",
         text: "Logout",
-        path: "/logout"
+        path: "/logout",
+        loginRequired: true
       }
     ]
   }),
+  computed: {
+    loggedInNavigationItems: function() {
+      let items = [];
+      this.sideNavigationItems.forEach(element => {
+        if(element.loginRequired) {
+          items.push(element);
+        }
+      });
+      return items;
+    },
+    notLoggedInNavigationItems: function() {
+      let items = [];
+      this.sideNavigationItems.forEach(element => {
+        if(!element.loginRequired) {
+          items.push(element);
+        }
+      });
+      return items;
+    }
+  },
   methods: {
     disabledMobileMenu() {
       this.mobileMenu = false;
@@ -221,6 +262,14 @@ export default {
     }
   },
   mounted() {
+    /* Set loginSession when the app is opened */
+    if(sessionStorage.getItem("appAuthToken")) {
+      authService.validate().then(response => {
+        if(response.status === 200) {
+          this.$store.dispatch("setLoggedIn", true);
+        }
+      });
+    }
     let darkMode = sessionStorage.getItem("darkMode");
     if(darkMode) {
       if(darkMode === "true") {
