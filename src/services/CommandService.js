@@ -1,15 +1,13 @@
 import Axios from 'axios';
 
-const api_base_url = "https://localhost:5001/api";
-
 export default class CommandService {
 
     createCommand(command) {
-        return Axios.post(api_base_url + "/command", command);
+        return Axios.post(process.env.VUE_APP_ROOT_API + "/command", command);
     }
 
     getCommandById(commandId) {
-        return Axios.get(api_base_url + "/command", {
+        return Axios.get(process.env.VUE_APP_ROOT_API + "/command", {
             params: {
                 commandId: commandId
             }
@@ -17,7 +15,7 @@ export default class CommandService {
     }
 
     updateCommand(commandId, command) {
-        return Axios.put(api_base_url + "/command", command, {
+        return Axios.put(process.env.VUE_APP_ROOT_API + "/command", command, {
             params: {
                 commandId: commandId
             }
@@ -25,7 +23,7 @@ export default class CommandService {
     }
 
     deleteCommand(commandId) {
-        return Axios.delete(api_base_url + "/command", {
+        return Axios.delete(process.env.VUE_APP_ROOT_API + "/command", {
             params: {
                 commandId: commandId
             }
@@ -33,7 +31,7 @@ export default class CommandService {
     }
 
     getAllCommands() {
-        return Axios.get(api_base_url + "/command/all");
+        return Axios.get(process.env.VUE_APP_ROOT_API + "/command/all");
     }
 
 }

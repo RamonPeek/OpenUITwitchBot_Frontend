@@ -16,7 +16,6 @@ Vue.config.productionTip = false
 Vue.use(Vuex)
 Vue.use(VueToast);
 
-
 let whiteListedRoutes = [
   "Login",
   "Register",
@@ -27,7 +26,9 @@ let whiteListedRoutes = [
 const store = new Vuex.Store({
   state: {
     loggedIn: false,
-    currentUser: null
+    currentUser: null,
+    apiHost: null,
+    apiPort: null
   },
   mutations: {
     setLoggedIn(state, loginState) {
@@ -35,6 +36,12 @@ const store = new Vuex.Store({
     },
     setCurrentUser(state, user) {
       state.currentUser = user;
+    },
+    setApiHost(state, host) {
+      state.apiHost = host;
+    },
+    setApiPort(state, port) {
+      state.apiPort = port;
     }
   },
   actions: {
@@ -43,6 +50,12 @@ const store = new Vuex.Store({
     },
     setCurrentUser(state, user) {
       state.commit("setCurrentUser", user);
+    },
+    setApiHost(state, host) {
+      state.commit("setApiHost", host);
+    },
+    setApiPort(state, port) {
+      state.commit("setApiPort", port);
     }
   },
   getters: {
@@ -51,6 +64,9 @@ const store = new Vuex.Store({
     },
     currentUser(state) {
       return state.currentUser;
+    },
+    api(state) {
+      return state.apiHost + ":" + state.apiPort;
     }
   }
 })

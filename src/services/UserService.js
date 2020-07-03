@@ -1,15 +1,13 @@
 import Axios from 'axios';
 
-const api_base_url = "https://localhost:5001/api";
-
 export default class UserService {
 
     createUser(userWithCredentials) {
-        return Axios.post(api_base_url + "/user", userWithCredentials);
+        return Axios.post(process.env.VUE_APP_ROOT_API + "/user", userWithCredentials);
     }
 
     getUserById(userId) {
-        return Axios.get(api_base_url + "/user", {
+        return Axios.get(process.env.VUE_APP_ROOT_API + "/user", {
             params: {
                 userId: userId
             }
@@ -17,7 +15,7 @@ export default class UserService {
     }
 
     updateUser(userId, user) {
-        return Axios.put(api_base_url + "/user", user, {
+        return Axios.put(process.env.VUE_APP_ROOT_API + "/user", user, {
             params: {
                 userId: userId
             }
@@ -25,7 +23,7 @@ export default class UserService {
     }
 
     deleteUser(userId) {
-        return Axios.delete(api_base_url + "/user", {
+        return Axios.delete(process.env.VUE_APP_ROOT_API + "/user", {
             params: {
                 userId: userId
             }
@@ -33,7 +31,7 @@ export default class UserService {
     }
 
     getAllCommands() {
-        return Axios.get(api_base_url + "/user/all");
+        return Axios.get(process.env.VUE_APP_ROOT_API + "/user/all");
     }
 
 }

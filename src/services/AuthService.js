@@ -1,14 +1,13 @@
 import Axios from 'axios';
 
-const api_base_url = "https://localhost:5001/api";
-
 export default class UserService {
 
+
     authenticate(credentials) {
-        return Axios.post(api_base_url + "/auth", credentials);
+        return Axios.post(process.env.VUE_APP_ROOT_API +"/auth", credentials);
     }
 
     validate() {
-        return Axios.post(api_base_url + "/auth/validate");
+        return Axios.post(process.env.VUE_APP_ROOT_API + "/auth/validate");
     }
 }
