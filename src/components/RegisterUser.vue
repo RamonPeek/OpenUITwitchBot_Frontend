@@ -269,7 +269,7 @@
       },
       handleTwitchAuthentication() {
         let clientId = process.env.VUE_APP_TWITCH_PUBLIC_CLIENT_ID;
-        let returnUrl = process.env.VUE_APP_ROOT + "/register/2";
+        let returnUrl = process.env.VUE_APP_ROOT + "/#/register/2";
         let scope = "user:read:email";
         window.location = "https://id.twitch.tv/oauth2/authorize?client_id=" + clientId + "&redirect_uri=" + returnUrl + "&response_type=token&scope=" + scope;
       }
