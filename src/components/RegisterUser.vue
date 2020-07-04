@@ -268,6 +268,7 @@
         });
       },
       handleTwitchAuthentication() {
+        console.warn(process.env);
         let clientId = process.env.VUE_APP_TWITCH_PUBLIC_CLIENT_ID;
         let returnUrl = process.env.VUE_APP_ROOT + "/#/register/2";
         let scope = "user:read:email";
