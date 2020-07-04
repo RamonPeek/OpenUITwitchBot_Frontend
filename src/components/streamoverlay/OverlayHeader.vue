@@ -81,26 +81,22 @@
           {
             icon: "mdi-account",
             text: "Latest follower",
-            value: "RamonPeekFifa",
-            enabled: true
+            value: "RamonPeekFifa"
           },
           {
             icon: "mdi-currency-usd",
             text: "Highest donation",
-            value: "TestAccount2",
-            enabled: true
+            value: "TestAccount2"
           },
           {
             icon: "mdi-account-clock",
             text: "Active viewer",
-            value: "DamagedA",
-            enabled: true
+            value: "DamagedA"
           },
           {
             icon: "mdi-eye",
             text: "Viewers",
-            value: "12",
-            enabled: true
+            value: "12"
           }
         ]
       }
