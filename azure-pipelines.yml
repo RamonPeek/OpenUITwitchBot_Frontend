@@ -20,7 +20,11 @@ steps:
   displayName: 'yarn install and build'
   env:
     VUE_APP_TWITCH_PUBLIC_CLIENT_ID: '$(VUE_APP_TWITCH_PUBLIC_CLIENT_ID)'
-
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '.htaccess'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/dist'
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(Build.SourcesDirectory)'
