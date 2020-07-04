@@ -75,8 +75,69 @@ const store = new Vuex.Store({
 router.beforeEach((to, from, next) => {
   //User first loads app
   if(from.name == null) {
-    console.log("SEND TO LOGIN WITHOUT ERROR");
-    next();
+    //Component requires authentication
+    if (!whiteListedRoutes.includes(to.name)) {
+      if (sessionStorage.getItem("appAuthToken")) {
+        authService.validate().then(response => {
+          if (response.status === 401) {
+            Vue.$toast.open({
+              message: 'Your session has expired.',
+              type: 'error',
+              duration: 2500,
+            });
+            next({name: "Logout"});
+          } else {
+            next();
+          }
+        });
+      } else {
+        Vue.$toast.open({
+          message: 'You must be logged-in to view this page.',
+          type: 'error',
+          duration: 2500,
+        })
+        next({name: "Logout"});
+      }
+      //Component does not requires authentication
+    } else {
+      if (to.name === "Login") {
+        if (sessionStorage.getItem("appAuthToken")) {
+          authService.validate().then(response => {
+            if (response.status === 401) {
+              Vue.$toast.open({
+                message: 'Your session has expired.',
+                type: 'error',
+                duration: 2500,
+              });
+              next({name: "Logout"});
+            } else {
+              next({name: "Dashboard"});
+            }
+          });
+        } else {
+          next();
+        }
+      } else if (to.name === "Register") {
+        if (sessionStorage.getItem("appAuthToken")) {
+          authService.validate().then(response => {
+            if (response.status === 401) {
+              Vue.$toast.open({
+                message: 'Your session has expired.',
+                type: 'error',
+                duration: 2500,
+              });
+              next({name: "Logout"});
+            } else {
+              next({name: "Dashboard"});
+            }
+          });
+        } else {
+          next();
+        }
+      } else {
+        next();
+      }
+    }
   }else{
     //Remove temporarily store register credentials when navigating away from the register-component
     if(from.name === "Register" && to.name !== "Register") {
@@ -88,7 +149,6 @@ router.beforeEach((to, from, next) => {
       if (!whiteListedRoutes.includes(to.name)) {
         if (sessionStorage.getItem("appAuthToken")) {
           authService.validate().then(response => {
-            console.log("NOW SHOW ERROR");
             if (response.status === 401) {
               Vue.$toast.open({
                 message: 'Your session has expired.',
@@ -144,7 +204,14 @@ router.beforeEach((to, from, next) => {
           } else {
             next();
           }
-        } else {
+        } else if(to.name === "Logout") {
+          Vue.$toast.open({
+            message: 'Successfully logged out.',
+            type: 'success',
+            duration: 2500,
+          });
+          next();
+        }else{
           next();
         }
       }
