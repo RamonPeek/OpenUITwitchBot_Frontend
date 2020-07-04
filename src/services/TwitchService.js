@@ -14,7 +14,6 @@ export default class TwitchService {
     }
 
     testGetChannel() {
-        console.log("test");
         return Axios.get(api_base_url + "/streams?game_id=33214");
     }
 }
