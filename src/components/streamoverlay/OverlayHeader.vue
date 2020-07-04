@@ -1,6 +1,6 @@
 <template>
-  <div class="overlay_header">
-    <div v-for="item in items" :key="item.index" class="item_container">
+  <draggable v-model="headerItems" @start="drag=true" group="overlayItems" @end="drag=false" class="overlay_header">
+    <div v-for="(item, index) in headerItems" :key="index" class="item_container">
       <div class="item_wrapper">
         <v-icon v-text="item.icon" class="item_icon"></v-icon>
         <div class="item_text_container">
@@ -10,8 +10,7 @@
         </div>
       </div>
     </div>
-
-  </div>
+  </draggable>
 </template>
 
 <style scoped>
@@ -22,15 +21,21 @@
     background-color: red !important;
     display: flex;
     justify-content: start;
-    padding-left: 4px;
-    padding-right: 4px;
   }
 
   .item_container {
     width: calc(100% / 5);
-    margin-top: 4px;
+    padding: 4px;
     font-size: 10pt;
     text-align: center;
+  }
+
+  .item_container:hover {
+    cursor:grab;
+  }
+
+  .item_container:active {
+    cursor:grabbing;
   }
 
   .item_wrapper {
@@ -72,12 +77,16 @@
 </style>
 
 <script>
+  import draggable from 'vuedraggable'
+
   export default {
     name: 'OverlayHeader',
-
+    components: {
+      draggable
+    },
     data () {
       return {
-        items: [
+        headerItems: [
           {
             icon: "mdi-account",
             text: "Latest follower",
@@ -97,15 +106,23 @@
             icon: "mdi-eye",
             text: "Viewers",
             value: "12"
+          },
+          {
+            icon: "mdi-car",
+            text: "Test1",
+            value: "Test1"
           }
-        ]
+        ].slice(0, 5)
       }
     },
     methods: {
 
     },
+    computed: {
+
+    },
     mounted() {
 
-    }
+    },
   }
 </script>

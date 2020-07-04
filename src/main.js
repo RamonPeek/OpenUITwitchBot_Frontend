@@ -28,7 +28,51 @@ const store = new Vuex.Store({
     loggedIn: false,
     currentUser: null,
     apiHost: null,
-    apiPort: null
+    apiPort: null,
+    overlayItems: [
+      {
+        icon: "mdi-account",
+        text: "Latest follower",
+        value: "RamonPeekFifa"
+      },
+      {
+        icon: "mdi-currency-usd",
+        text: "Highest donation",
+        value: "TestAccount2"
+      },
+      {
+        icon: "mdi-account-clock",
+        text: "Active viewer",
+        value: "DamagedA"
+      },
+      {
+        icon: "mdi-eye",
+        text: "Viewers",
+        value: "12"
+      },
+      {
+        icon: "mdi-car",
+        text: "Test1",
+        value: "Test1"
+      },
+      {
+        icon: "mdi-home",
+        text: "Test2",
+        value: "Test2"
+      },
+      {
+
+      },
+      {
+
+      },
+      {
+
+      },
+      {
+
+      },
+    ]
   },
   mutations: {
     setLoggedIn(state, loginState) {
@@ -42,6 +86,9 @@ const store = new Vuex.Store({
     },
     setApiPort(state, port) {
       state.apiPort = port;
+    },
+    updateOverlayItems(state, items) {
+      state.overlayItems = items;
     }
   },
   actions: {
@@ -56,6 +103,9 @@ const store = new Vuex.Store({
     },
     setApiPort(state, port) {
       state.commit("setApiPort", port);
+    },
+    updateOverlayItems(state, items) {
+      state.commit("updateOverlayItems", items);
     }
   },
   getters: {
@@ -67,7 +117,11 @@ const store = new Vuex.Store({
     },
     api(state) {
       return state.apiHost + ":" + state.apiPort;
+    },
+    overlayItems(state) {
+      return state.overlayItems;
     }
+
   }
 })
 
