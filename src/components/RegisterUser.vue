@@ -243,8 +243,7 @@
       registerUser() {
         userService.createUser({
           user: {
-            //TODO GENERATE RANDOM ID ON BACKEND??
-            id: "qwertyuiop",
+            id: null,
             twitchAccount: {
               id: this.twitchAuthenticatedAccount.id,
               oAuthToken: this.twitchOAuth,

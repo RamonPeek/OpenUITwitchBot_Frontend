@@ -174,8 +174,10 @@
 
 <script>
 import AuthService from "./services/AuthService";
+import UserService from "./services/UserService"
 
 let authService = new AuthService();
+let userService = new UserService();
 
 export default {
   name: 'App',
@@ -270,7 +272,19 @@ export default {
     if(sessionStorage.getItem("appAuthToken")) {
       authService.validate().then(response => {
         if(response.status === 200) {
-          this.$store.dispatch("setLoggedIn", true);
+          authService.validate().then(userIdResponse => {
+            userService.getUserById(userIdResponse.data).then(userResponse => {
+              sessionStorage.setItem("twitchAuthToken", userResponse.data.twitchAccount.oAuthToken);
+              this.$store.dispatch("setLoggedIn", true);
+              this.$store.dispatch("setCurrentUser", userResponse.data);
+              this.$toast.open({
+                message: 'Successfully logged in.',
+                type: 'success',
+                duration: 2500,
+              });
+              this.$router.push({name: "Dashboard"});
+            });
+          });
         }
       });
     }
