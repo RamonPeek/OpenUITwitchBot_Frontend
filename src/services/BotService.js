@@ -11,7 +11,8 @@ export default class BotService {
         this.options = {
             connection: {
                 cluster: "aws",
-                reconnect: true
+                reconnect: true,
+                secure: true
             },
             identity: {
                 username: username,
