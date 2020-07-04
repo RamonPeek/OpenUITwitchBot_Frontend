@@ -7,13 +7,14 @@ import Settings from '../views/settings/settings.vue'
 import Register from '../views/register/register.vue'
 import Login from '../views/login/login.vue'
 import Logout from '../views/logout/logout.vue'
+import StreamOverlay from '../views/streamoverlay/streamoverlay.vue'
 
 Vue.use(VueRouter)
 
   const routes = [
   {
     path: '/',
-    name: 'Login',
+    name: 'Default',
     component: Login
   },
   {
@@ -50,6 +51,11 @@ Vue.use(VueRouter)
     path: '/logout',
     name: 'Logout',
     component: Logout
+  },
+  {
+    path: '/streamoverlay',
+    name: 'StreamOverlay',
+    component: StreamOverlay
   },
   {
     path: '*',

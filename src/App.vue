@@ -196,6 +196,12 @@ export default {
         loginRequired: true
       },
       {
+        icon: "mdi-monitor-screenshot",
+        text: "Stream overlay",
+        path: "/streamoverlay",
+        loginRequired: true
+      },
+      {
         icon: "mdi-clipboard-alert",
         text: "Commands",
         path: "/commands",
@@ -277,12 +283,6 @@ export default {
               sessionStorage.setItem("twitchAuthToken", userResponse.data.twitchAccount.oAuthToken);
               this.$store.dispatch("setLoggedIn", true);
               this.$store.dispatch("setCurrentUser", userResponse.data);
-              this.$toast.open({
-                message: 'Successfully logged in.',
-                type: 'success',
-                duration: 2500,
-              });
-              this.$router.push({name: "Dashboard"});
             });
           });
         }
