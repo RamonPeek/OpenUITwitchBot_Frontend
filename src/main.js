@@ -29,7 +29,7 @@ const store = new Vuex.Store({
     currentUser: null,
     apiHost: null,
     apiPort: null,
-    overlayItems: [
+    overlayHeaderItems: [
       {
         icon: "mdi-account",
         text: "Latest follower",
@@ -54,7 +54,9 @@ const store = new Vuex.Store({
         icon: "mdi-car",
         text: "Test1",
         value: "Test1"
-      },
+      }
+    ],
+    overlayFooterItems: [
       {
         icon: "mdi-home",
         text: "Test2",
@@ -71,7 +73,7 @@ const store = new Vuex.Store({
       },
       {
 
-      },
+      }
     ]
   },
   mutations: {
@@ -87,8 +89,17 @@ const store = new Vuex.Store({
     setApiPort(state, port) {
       state.apiPort = port;
     },
-    updateOverlayItems(state, items) {
-      state.overlayItems = items;
+    setOverlayHeaderItemAt(state, itemWithIndex) {
+      state.overlayHeaderItems[itemWithIndex.index] = itemWithIndex.item;
+    },
+    setOverlayFooterItemAt(state, itemWithIndex) {
+      state.overlayFooterItems[itemWithIndex.index] = itemWithIndex.item;
+    },
+    updateOverlayHeaderItems(state, items) {
+      state.overlayHeaderItems = items;
+    },
+    updateOverlayFooterItems(state, items) {
+      state.overlayFooterItems = items;
     }
   },
   actions: {
@@ -104,8 +115,17 @@ const store = new Vuex.Store({
     setApiPort(state, port) {
       state.commit("setApiPort", port);
     },
-    updateOverlayItems(state, items) {
-      state.commit("updateOverlayItems", items);
+    setOverlayHeaderItemAt(state, itemWithIndex) {
+      state.commit("setOverlayHeaderItemAt", itemWithIndex);
+    },
+    setOverlayFooterItemAt(state, itemWithIndex) {
+      state.commit("setOverlayFooterItemAt", itemWithIndex);
+    },
+    updateOverlayHeaderItems(state, items) {
+      state.commit("updateOverlayHeaderItems", items);
+    },
+    updateOverlayFooterItems(state, items) {
+      state.commit("updateOverlayFooterItems", items);
     }
   },
   getters: {
@@ -118,10 +138,12 @@ const store = new Vuex.Store({
     api(state) {
       return state.apiHost + ":" + state.apiPort;
     },
-    overlayItems(state) {
-      return state.overlayItems;
+    overlayHeaderItems(state) {
+      return state.overlayHeaderItems;
+    },
+    overlayFooterItems(state) {
+      return state.overlayFooterItems;
     }
-
   }
 })
 

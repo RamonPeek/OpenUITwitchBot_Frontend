@@ -1,6 +1,6 @@
 <template>
-  <draggable v-model="footerItems" @start="drag=true" group="overlayItems" @end="drag=false" class="overlay_footer">
-    <div v-for="(item, index) in footerItems" :key="index" class="item_container">
+  <draggable v-model="items" @start="drag=true" group="overlayItems" :move="moveHandler" @end="drag=false" class="overlay_footer">
+    <div v-for="(item, index) in items" :key="index" class="item_container">
       <div class="item_wrapper">
         <v-icon v-text="item.icon" class="item_icon"></v-icon>
         <div class="item_text_container">
@@ -86,27 +86,18 @@
     },
     data () {
       return {
-        footerItems: [
-          {
-
-          },
-          {
-
-          },
-          {
-
-          },
-          {
-
-          },
-          {
-
-          }
-        ]
+        items: this.footerItems
       }
     },
     methods: {
+      moveHandler() {
 
+      }
+    },
+    props: {
+      footerItems: {
+        type: Array
+      }
     },
     computed: {
 

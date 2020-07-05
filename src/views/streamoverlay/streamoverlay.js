@@ -14,36 +14,24 @@ export default {
   props: [],
   data () {
     return {
-
     }
   },
   computed: {
-    items: {
+    headerItems: {
       get() {
-        return this.$store.getters.overlayItems
+        return this.$store.getters.overlayHeaderItems;
       },
       set(val) {
-        console.warn(val);
-        this.$store.dispatch("updateOverlayItems", val);
+        this.$store.dispatch("updateOverlayHeaderItems", val);
       }
     },
-    headerItems: function() {
-      let resultItems = [];
-      this.items.forEach(element => {
-        if(this.items.indexOf(element) >= 0 && this.items.indexOf(element) <= 4) {
-          resultItems.push(element);
-        }
-      });
-      return resultItems;
-    },
-    footerItems: function() {
-      let resultItems = [];
-      this.items.forEach(element => {
-        if(this.items.indexOf(element) >= 5 && this.items.indexOf(element) <= 9) {
-          resultItems.push(element);
-        }
-      });
-      return resultItems;
+    footerItems: {
+      get() {
+        return this.$store.getters.overlayFooterItems
+      },
+      set(val) {
+        this.$store.dispatch("updateOverlayFooterItems", val);
+      }
     }
   },
   mounted () {

@@ -1,8 +1,8 @@
 <template>
-  <draggable v-model="headerItems" @start="drag=true" group="overlayItems" @end="drag=false" class="overlay_header">
-    <div v-for="(item, index) in headerItems" :key="index" class="item_container">
-      <div class="item_wrapper">
-        <v-icon v-text="item.icon" class="item_icon"></v-icon>
+  <draggable v-model="items" @start="drag=true" group="overlayItems" :move="moveHandler" @end="drag=false" class="overlay_header">
+    <div v-for="(item, index) in items" :key="index" class="item_container">
+      <div class="item_wrapper" v-if="item">
+        <v-icon v-if="item.icon" v-text="item.icon" class="item_icon"></v-icon>
         <div class="item_text_container">
           <div v-if="item.text" class="item_text">{{item.text}}</div>
           <div v-if="item.text && item.value" class="item_colon">:</div>
@@ -86,40 +86,44 @@
     },
     data () {
       return {
-        headerItems: [
-          {
-            icon: "mdi-account",
-            text: "Latest follower",
-            value: "RamonPeekFifa"
-          },
-          {
-            icon: "mdi-currency-usd",
-            text: "Highest donation",
-            value: "TestAccount2"
-          },
-          {
-            icon: "mdi-account-clock",
-            text: "Active viewer",
-            value: "DamagedA"
-          },
-          {
-            icon: "mdi-eye",
-            text: "Viewers",
-            value: "12"
-          },
-          {
-            icon: "mdi-car",
-            text: "Test1",
-            value: "Test1"
-          }
-        ].slice(0, 5)
+        items: this.headerItems
       }
     },
     methods: {
+      moveHandler(evt) {
+        if(evt.from !== evt.to) {
+          //this.items.splice(sourceIndex, 0, targetElement);
+          //targetArrayCopy.splice(targetIndex, 0, sourceElement);
+          //this.$store.dispatch("updateFooterOverlayItems", targetArrayCopy);
 
+          let targetIndex = evt.relatedContext.index;
+          let targetElement = this.$store.getters.overlayFooterItems[targetIndex];
+          let sourceIndex = evt.relatedContext.index;
+
+          this.items.splice(sourceIndex, 0, targetElement);
+          evt.relatedContext.list.splice(sourceIndex, 1);
+          this.$store.dispatch("updateOverlayHeaderItems", this.items);
+          this.$store.dispatch("updateOverlayFooterItems", evt.relatedContext.list);
+          /*
+            if(evt.relatedContext.index <= 4) {
+              //Move latest item of new component to old component
+              let lastItemInNewContext = evt.relatedContext.list[4];
+              this.items.push(lastItemInNewContext);
+              evt.relatedContext.list.splice(4, 1);
+            }else if(evt.relatedContext.index === 5) {
+              console.warn(5);
+              //End of other component -> move to end of current component
+              console.warn(evt.draggedContext.element)
+              console.log("End of other component -> move to end of current component")
+            }
+       */
+        }
+      }
     },
-    computed: {
-
+    props: {
+      headerItems: {
+        type: Array
+      }
     },
     mounted() {
 
