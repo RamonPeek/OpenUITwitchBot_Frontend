@@ -76,7 +76,6 @@
 
   .item_value {
     padding-left: 5px;
-    text-align: start !important;
   }
 </style>
 
