@@ -3,6 +3,9 @@ import OverlayContent from '../../components/streamoverlay/OverlayContent';
 import OverlayFooter from '../../components/streamoverlay/OverlayFooter';
 import draggable from "vuedraggable";
 import {VIcon} from 'vuetify/lib'
+import TwitchWebhookService from '../../services/TwitchWebhookService';
+
+let twitchWebhookService = new TwitchWebhookService();
 
 export default {
   name: 'streamoverlay',
@@ -38,16 +41,16 @@ export default {
     }
   },
   mounted () {
-    //SIMULATE WEBHOOKS BY USING RUNNABLE
-    let i = 0;
-    let vm = this;
-    window.setInterval(function(){
-      vm.$store.dispatch("updateValueForIdentifier", {
-        identifier: "LATEST_FOLLOWER",
-        value: i
-      });
-      i++;
-    }, 300);
+    console.warn(this.$router.currentRoute.path)
+    twitchWebhookService.subscribe(this.$router.currentRoute.path, "").then(result => {
+      console.log(result);
+    });
+    /*
+    this.$store.dispatch("updateValueForIdentifier", {
+      identifier: "LATEST_FOLLOWER",
+      value: 0
+    });
+     */
   },
   methods: {
     moveHeaderHandler(evt) {
