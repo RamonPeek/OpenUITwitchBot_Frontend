@@ -42,7 +42,7 @@ export default {
   },
   mounted () {
     console.warn(this.$router.currentRoute.path)
-    twitchWebhookService.subscribe(this.$router.currentRoute.path, "").then(result => {
+    twitchWebhookService.subscribe(this.$router.currentRoute.path, "https://api.twitch.tv/helix/users/follows?first=1&to_id=" + this.$store.getters.currentUser.twitchAccount.id).then(result => {
       console.log(result);
     });
     /*
