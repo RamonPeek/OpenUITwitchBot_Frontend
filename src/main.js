@@ -59,6 +59,7 @@ const store = new Vuex.Store({
     ],
     overlayFooterItems: [
       {
+        identifier: "TEST2",
         icon: "mdi-home",
         text: "Test2",
         value: "Test2"
@@ -97,7 +98,17 @@ const store = new Vuex.Store({
     },
     updateOverlayFooterItems(state, items) {
       state.overlayFooterItems = items;
-    }
+    },
+    updateValueForIdentifier(state, identifierValue) {
+      let indexToUpdateInHeader = state.overlayHeaderItems.findIndex((element) => element.identifier === identifierValue.identifier);
+      if(indexToUpdateInHeader >= 0) {
+        state.overlayHeaderItems[indexToUpdateInHeader].value = identifierValue.value.toString();
+      }
+      let indexToUpdateInFooter = state.overlayFooterItems.findIndex((element) => element.identifier === identifierValue.identifier);
+      if(indexToUpdateInFooter >= 0) {
+        state.overlayFooterItems[indexToUpdateInFooter].value = identifierValue.value.toString();
+      }
+    },
   },
   actions: {
     setLoggedIn(state, loginState) {
@@ -123,6 +134,9 @@ const store = new Vuex.Store({
     },
     updateOverlayFooterItems(state, items) {
       state.commit("updateOverlayFooterItems", items);
+    },
+    updateValueForIdentifier(state, identifierValue) {
+      state.commit("updateValueForIdentifier", identifierValue);
     }
   },
   getters: {

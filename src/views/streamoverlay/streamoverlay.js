@@ -38,7 +38,16 @@ export default {
     }
   },
   mounted () {
-
+    //SIMULATE WEBHOOKS BY USING RUNNABLE
+    let i = 0;
+    let vm = this;
+    window.setInterval(function(){
+      vm.$store.dispatch("updateValueForIdentifier", {
+        identifier: "LATEST_FOLLOWER",
+        value: i
+      });
+      i++;
+    }, 300);
   },
   methods: {
     moveHeaderHandler(evt) {
