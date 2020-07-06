@@ -20,7 +20,7 @@ steps:
   displayName: 'yarn install and build'
   env:
     VUE_APP_TWITCH_PUBLIC_CLIENT_ID: '$(VUE_APP_TWITCH_PUBLIC_CLIENT_ID)'
-    VUE_APP_ROOT_API: 'https://openuitwitchbotapi.azurewebsites.net/api'
+    VUE_APP_ROOT_API: 'https://openuitwitchbot-api.azurewebsites.net/api'
     VUE_APP_ROOT: 'https://openuitwitchbot.azurewebsites.net'
 
 - task: CopyFiles@2
