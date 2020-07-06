@@ -31,54 +31,45 @@ const store = new Vuex.Store({
     apiPort: null,
     overlayHeaderItems: [
       {
-        position: 0,
+        identifier: "LATEST_FOLLOWER",
         icon: "mdi-account",
         text: "Latest follower",
         value: "RamonPeekFifa"
       },
       {
-        position: 1,
+        identifier: "HIGHEST_DONATION",
         icon: "mdi-currency-usd",
         text: "Highest donation",
         value: "TestAccount2"
       },
       {
-        position: 2,
-        icon: "mdi-account-clock",
-        text: "Active viewer",
+        identifier: "NEWEST_DONATION",
+        icon: "mdi-currency-usd",
+        text: "Most recent donation",
         value: "DamagedA"
       },
       {
-        position: 3,
+        identifier: "VIEWER_COUNT",
         icon: "mdi-eye",
         text: "Viewers",
         value: "12"
       },
       {
-        position: 4,
-        icon: "mdi-car",
-        text: "Test1",
-        value: "Test1"
       }
     ],
     overlayFooterItems: [
       {
-        position: 5,
         icon: "mdi-home",
         text: "Test2",
         value: "Test2"
       },
       {
-        position: 6,
       },
       {
-        position: 7,
       },
       {
-        position: 8,
       },
       {
-        position: 9,
       }
     ]
   },

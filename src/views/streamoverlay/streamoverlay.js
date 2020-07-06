@@ -25,8 +25,6 @@ export default {
         return this.$store.state.overlayHeaderItems;
       },
       set(val) {
-        console.warn("setHeader");
-        console.warn(JSON.parse(JSON.stringify(val)))
         this.$store.commit("updateOverlayHeaderItems", val);
       }
     },
@@ -35,8 +33,6 @@ export default {
         return this.$store.state.overlayFooterItems;
       },
       set(val) {
-        console.warn("setFooter");
-        console.warn(JSON.parse(JSON.stringify(val)))
         this.$store.commit("updateOverlayFooterItems", val);
       }
     }
