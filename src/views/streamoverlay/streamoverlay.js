@@ -2,6 +2,7 @@ import OverlayHeader from '../../components/streamoverlay/OverlayHeader';
 import OverlayContent from '../../components/streamoverlay/OverlayContent';
 import OverlayFooter from '../../components/streamoverlay/OverlayFooter';
 import draggable from "vuedraggable";
+import {VIcon} from 'vuetify/lib'
 
 export default {
   name: 'streamoverlay',
@@ -9,28 +10,34 @@ export default {
     OverlayHeader,
     OverlayContent,
     OverlayFooter,
-    draggable
+    draggable,
+    VIcon
   },
   props: [],
   data () {
     return {
+      selectedIndex: null
     }
   },
   computed: {
     headerItems: {
       get() {
-        return this.$store.getters.overlayHeaderItems;
+        return this.$store.state.overlayHeaderItems;
       },
       set(val) {
-        this.$store.dispatch("updateOverlayHeaderItems", val);
+        console.warn("setHeader");
+        console.warn(JSON.parse(JSON.stringify(val)))
+        this.$store.commit("updateOverlayHeaderItems", val);
       }
     },
     footerItems: {
       get() {
-        return this.$store.getters.overlayFooterItems
+        return this.$store.state.overlayFooterItems;
       },
       set(val) {
-        this.$store.dispatch("updateOverlayFooterItems", val);
+        console.warn("setFooter");
+        console.warn(JSON.parse(JSON.stringify(val)))
+        this.$store.commit("updateOverlayFooterItems", val);
       }
     }
   },
@@ -38,7 +45,53 @@ export default {
 
   },
   methods: {
-
+    moveHeaderHandler(evt) {
+      if(this.selectedIndex) {
+        return false;
+      }
+      if(evt.from !== evt.to) {
+        let sourceIndex = evt.draggedContext.index;
+        let targetIndex = evt.draggedContext.futureIndex;
+        this.selectedIndex = targetIndex;
+        let targetElement = this.footerItems[targetIndex];
+        if(sourceIndex > 4) {
+          sourceIndex = 4;
+        }
+        if(targetIndex > 4) {
+          targetIndex = 4;
+        }
+        if(targetElement === undefined) {
+          targetElement = {}
+        }
+        this.headerItems.splice(sourceIndex + 1, 0, targetElement);
+        this.footerItems.splice(targetIndex, 1);
+      }
+    },
+    moveFooterHandler(evt) {
+      if(this.selectedIndex) {
+        return false;
+      }
+      if(evt.from !== evt.to) {
+        let sourceIndex = evt.draggedContext.index;
+        let targetIndex = evt.draggedContext.futureIndex;
+        this.selectedIndex = targetIndex;
+        let targetElement = this.headerItems[targetIndex];
+        if(sourceIndex > 4) {
+          sourceIndex = 4;
+        }
+        if(targetIndex > 4) {
+          targetIndex = 4;
+        }
+        if(targetElement === undefined) {
+          targetElement = {}
+        }
+        this.footerItems.splice(sourceIndex + 1, 0, targetElement);
+        this.headerItems.splice(targetIndex, 1);
+      }
+    },
+    enableMovement() {
+      this.selectedIndex = null
+    }
   }
 }
 

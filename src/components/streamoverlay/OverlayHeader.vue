@@ -1,16 +1,20 @@
 <template>
-  <draggable v-model="items" @start="drag=true" group="overlayItems" :move="moveHandler" @end="drag=false" class="overlay_header">
-    <div v-for="(item, index) in items" :key="index" class="item_container">
-      <div class="item_wrapper" v-if="item">
-        <v-icon v-if="item.icon" v-text="item.icon" class="item_icon"></v-icon>
-        <div class="item_text_container">
-          <div v-if="item.text" class="item_text">{{item.text}}</div>
-          <div v-if="item.text && item.value" class="item_colon">:</div>
-          <div v-if="item.value" class="item_value">{{item.value}}</div>
+  <div>
+    <draggable :list="items" @start="drag=true" group="overlayItems" :move="moveHandler" @end="drag=false" class="overlay_header">
+      <div v-for="item in items" :key="item.position" class="item_container">
+        <div class="item_wrapper" v-if="item">
+          <v-icon v-if="item.icon" v-text="item.icon" class="item_icon"></v-icon>
+          <div class="item_text_container">
+            <div v-if="item.text" class="item_text">{{item.text}}</div>
+            <div v-if="item.text && item.value" class="item_colon">:</div>
+            <div v-if="item.value" class="item_value">{{item.value}}</div>
+          </div>
         </div>
       </div>
-    </div>
-  </draggable>
+    </draggable>
+    <v-btn v-on:click="test">test</v-btn>
+  </div>
+
 </template>
 
 <style scoped>
@@ -90,33 +94,38 @@
       }
     },
     methods: {
+      test() {
+        this.items.splice(0, 1, {})
+      },
       moveHandler(evt) {
         if(evt.from !== evt.to) {
-          //this.items.splice(sourceIndex, 0, targetElement);
-          //targetArrayCopy.splice(targetIndex, 0, sourceElement);
-          //this.$store.dispatch("updateFooterOverlayItems", targetArrayCopy);
-
-          let targetIndex = evt.relatedContext.index;
-          let targetElement = this.$store.getters.overlayFooterItems[targetIndex];
-          let sourceIndex = evt.relatedContext.index;
-
-          this.items.splice(sourceIndex, 0, targetElement);
-          evt.relatedContext.list.splice(sourceIndex, 1);
-          this.$store.dispatch("updateOverlayHeaderItems", this.items);
-          this.$store.dispatch("updateOverlayFooterItems", evt.relatedContext.list);
-          /*
-            if(evt.relatedContext.index <= 4) {
-              //Move latest item of new component to old component
-              let lastItemInNewContext = evt.relatedContext.list[4];
-              this.items.push(lastItemInNewContext);
-              evt.relatedContext.list.splice(4, 1);
-            }else if(evt.relatedContext.index === 5) {
-              console.warn(5);
-              //End of other component -> move to end of current component
-              console.warn(evt.draggedContext.element)
-              console.log("End of other component -> move to end of current component")
+          let fromIndex = evt.draggedContext.index;
+          let fromElement = this.$store.getters.overlayHeaderItems[fromIndex];
+          let toIndex = evt.draggedContext.futureIndex;
+          //let toElement = this.$store.getters.overlayFooterItems[toIndex];
+          console.warn(toIndex);
+          console.warn(JSON.parse(JSON.stringify(fromElement)));
+          this.items.forEach((element, index) => {
+            if(element.position === toIndex) {
+              fromElement.position = toIndex;
+              console.log(index);
+              this.items.splice(index, 1, fromElement);
             }
-       */
+          })
+          this.items.splice(toIndex, 0, fromElement);
+          /*
+          this.$store.dispatch("setOverlayHeaderItemAt", {
+            index: fromIndex,
+            item: toElement
+          });
+
+          this.$store.dispatch("setOverlayFooterItemAt", {
+            index: toIndex,
+            item: fromElement
+          });*/
+
+
+
         }
       }
     },

@@ -1,13 +1,35 @@
 
 <section class="stream_overlay">
-  <div class="overlay_header">
-    <OverlayHeader :headerItems="headerItems"/>
-  </div>
-  <div class="overlay_content">
-    <OverlayContent/>
-  </div>
-  <div class="overlay_footer">
-    <OverlayFooter :footerItems="footerItems"/>
-  </div>
+    <div class="overlay_header">
+      <draggable v-model="headerItems" @start="drag=true" group="overlayItems" :move="moveHeaderHandler" @end="enableMovement" class="header_overlay_header">
+        <div v-for="(item, index) in headerItems" :key="index" class="header_item_container">
+          <div class="header_item_wrapper" v-if="item">
+            <v-icon v-if="item.icon" v-text="item.icon" class="header_item_icon"></v-icon>
+            <div class="header_item_text_container">
+              <div v-if="item.text" class="header_item_text">{{item.text}}</div>
+              <div v-if="item.text && item.value" class="header_item_colon">:</div>
+              <div v-if="item.value" class="header_item_value">{{item.value}}</div>
+            </div>
+          </div>
+        </div>
+      </draggable>
+    </div>
+    <div class="overlay_content">
+      <OverlayContent/>
+    </div>
+    <div class="overlay_footer">
+      <draggable v-model="footerItems" @start="drag=true" group="overlayItems" :move="moveFooterHandler" @end="enableMovement" class="footer_overlay_footer">
+        <div v-for="(item, index) in footerItems" :key="index" class="footer_item_container">
+          <div class="footer_item_wrapper">
+            <v-icon v-text="item.icon" class="footer_item_icon"></v-icon>
+            <div class="footer_item_text_container">
+              <div v-if="item.text" class="footer_item_text">{{item.text}}</div>
+              <div v-if="item.text && item.value" class="footer_item_colon">:</div>
+              <div v-if="item.value" class="footer_item_value">{{item.value}}</div>
+            </div>
+          </div>
+        </div>
+      </draggable>
+    </div>
 </section>
 
