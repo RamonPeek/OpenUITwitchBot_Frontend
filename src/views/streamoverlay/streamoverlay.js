@@ -48,7 +48,6 @@ export default {
       });
       i++;
     }, 300);
-    console.log("test");
   },
   methods: {
     moveHeaderHandler(evt) {
