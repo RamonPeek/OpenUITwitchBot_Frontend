@@ -174,10 +174,11 @@
 
 <script>
 import AuthService from "./services/AuthService";
-import UserService from "./services/UserService"
+import UserService from "./services/UserService";
 
 let authService = new AuthService();
 let userService = new UserService();
+
 
 export default {
   name: 'App',
@@ -231,7 +232,9 @@ export default {
         path: "/logout",
         loginRequired: true
       }
-    ]
+    ],
+    twitchBotClient: null
+
   }),
   computed: {
     loggedInNavigationItems: function() {
@@ -271,7 +274,7 @@ export default {
       if(this.$router.currentRoute.path !== path) {
         this.$router.push(path);
       }
-    }
+    },
   },
   mounted() {
     /* Set loginSession when the app is opened */
@@ -283,11 +286,13 @@ export default {
               sessionStorage.setItem("twitchAuthToken", userResponse.data.twitchAccount.oAuthToken);
               this.$store.dispatch("setLoggedIn", true);
               this.$store.dispatch("setCurrentUser", userResponse.data);
+              this.$store.dispatch("initializeTwitchBotClient");
             });
           });
         }
       });
     }
+    //SET DARK/LIGHT MODE BASED ON PREFERENCE
     let darkMode = sessionStorage.getItem("darkMode");
     if(darkMode) {
       if(darkMode === "true") {

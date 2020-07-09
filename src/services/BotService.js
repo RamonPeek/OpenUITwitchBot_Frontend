@@ -3,7 +3,6 @@ import tmi from 'tmi.js';
 
 export default class BotService {
 
-
     constructor(username, oauth, channels) {
         this.username = username;
         this.oauth = oauth;
@@ -18,7 +17,8 @@ export default class BotService {
                 username: username,
                 password: oauth
             },
-            channels: channels
+            channels: channels,
+            debug: true
         }
     }
 

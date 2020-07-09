@@ -7,7 +7,10 @@ import Axios from 'axios'
 import AuthService from './services/AuthService';
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-default.css';
+import BotService from "./services/BotService";
+import CommandService from "./services/CommandService";
 
+let commandService = new CommandService();
 let authService = new AuthService();
 
 Vue.config.productionTip = false
@@ -31,18 +34,6 @@ const store = new Vuex.Store({
     apiPort: null,
     overlayHeaderItems: [
       {
-        identifier: "LATEST_FOLLOWER",
-        icon: "mdi-account",
-        text: "Latest follower",
-        value: "-"
-      },
-      {
-        identifier: "LATEST_SUBSCRIBER",
-        icon: "mdi-shield-star-outline",
-        text: "Latest subscriber",
-        value: "-"
-      },
-      {
         identifier: "CURRENT_GAME",
         icon: "mdi-gamepad-variant",
         text: "Currently playing",
@@ -51,20 +42,46 @@ const store = new Vuex.Store({
       {
       },
       {
+        identifier: "LATEST_SUBSCRIBER",
+        icon: "mdi-shield-star-outline",
+        text: "Latest subscriber",
+        value: "-"
+      },
+      {
+      },
+      {
+        identifier: "LATEST_FOLLOWER",
+        icon: "mdi-account",
+        text: "Latest follower",
+        value: "-"
       }
+
     ],
     overlayFooterItems: [
       {
+        identifier: "YOUTUBE",
+        icon: "mdi-youtube",
+        text: "YouTube",
+        value: "-"
       },
       {
       },
       {
+        identifier: "DISCORD",
+        icon: "mdi-discord",
+        text: "Discord",
+        value: "-"
       },
       {
       },
       {
+        identifier: "Twitter",
+        icon: "mdi-twitter",
+        text: "Twitter",
+        value: "-"
       }
-    ]
+    ],
+    twitchBotClient: null
   },
   mutations: {
     setLoggedIn(state, loginState) {
@@ -101,6 +118,37 @@ const store = new Vuex.Store({
         state.overlayFooterItems[indexToUpdateInFooter].value = identifierValue.value.toString();
       }
     },
+    initializeTwitchBotClient(state) {
+      if(state.twitchBotClient) {
+        state.twitchBotClient.disconnect();
+      }
+      state.twitchBotClient = new BotService(this.getters.currentUser.twitchAccount.displayName, 'oauth:' + this.getters.currentUser.twitchAccount.oAuthToken,
+          [this.getters.currentUser.twitchAccount.displayName]).getClient();
+      commandService.getAllCommands().then(response => {
+        if(response.status === 200) {
+          let chatActionCommands = [];
+          response.data.forEach(command => {
+            //CHAT_REPLY
+            if(command.type === 0) {
+              chatActionCommands.push(command);
+            }
+          });
+          console.warn(chatActionCommands);
+          //RUN THE COMMAND ACTION_HANDLER ON THE BACKGROUND AS THIS HAS TO WORK ALWAYS WHEN THE APP IS RUNNING (NO MATTER WHICH COMPONENT)
+          //START THE BOT SERVICE ONCE THE USER IS SUCCESSFULLY AUTHENTICATED.
+          //TODO MOVE THIS TO SEPERATE BOT ACCOUNT INSTEAD OF LOGGEDIN USER
+          this.getters.twitchBotClient.connect();
+          this.getters.twitchBotClient.on("chat", function (channel, user, message) {
+            chatActionCommands.forEach(command => {
+              if(message.startsWith(command.tag)) {
+                let message = "[BOT_NAME]: " + command.content;
+                state.twitchBotClient.say(state.currentUser.twitchAccount.displayName, message);
+              }
+            })
+          });
+        }
+      });
+    }
   },
   actions: {
     setLoggedIn(state, loginState) {
@@ -129,6 +177,9 @@ const store = new Vuex.Store({
     },
     updateValueForIdentifier(state, identifierValue) {
       state.commit("updateValueForIdentifier", identifierValue);
+    },
+    initializeTwitchBotClient(state, client) {
+      state.commit("initializeTwitchBotClient", client);
     }
   },
   getters: {
@@ -146,8 +197,11 @@ const store = new Vuex.Store({
     },
     overlayFooterItems(state) {
       return state.overlayFooterItems;
+    },
+    twitchBotClient(state) {
+      return state.twitchBotClient;
     }
-  }
+  },
 })
 
 /* Execute before each route-change */

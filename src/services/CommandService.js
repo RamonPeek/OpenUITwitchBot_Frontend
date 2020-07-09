@@ -34,4 +34,12 @@ export default class CommandService {
         return Axios.get(process.env.VUE_APP_ROOT_API + "/api/command/all");
     }
 
+    getCommandTypeNames() {
+        return Axios.get(process.env.VUE_APP_ROOT_API + "/api/command/types");
+    }
+
+    getCommandTypeIdByName(name) {
+        return Axios.get(process.env.VUE_APP_ROOT_API + "/api/command/type?name=" + name);
+    }
+
 }
