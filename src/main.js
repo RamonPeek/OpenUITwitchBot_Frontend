@@ -34,35 +34,27 @@ const store = new Vuex.Store({
         identifier: "LATEST_FOLLOWER",
         icon: "mdi-account",
         text: "Latest follower",
-        value: "RamonPeekFifa"
+        value: "-"
       },
       {
-        identifier: "HIGHEST_DONATION",
-        icon: "mdi-currency-usd",
-        text: "Highest donation",
-        value: "TestAccount2"
+        identifier: "LATEST_SUBSCRIBER",
+        icon: "mdi-shield-star-outline",
+        text: "Latest subscriber",
+        value: "-"
       },
       {
-        identifier: "NEWEST_DONATION",
-        icon: "mdi-currency-usd",
-        text: "Most recent donation",
-        value: "DamagedA"
+        identifier: "CURRENT_GAME",
+        icon: "mdi-gamepad-variant",
+        text: "Currently playing",
+        value: "-"
       },
       {
-        identifier: "VIEWER_COUNT",
-        icon: "mdi-eye",
-        text: "Viewers",
-        value: "12"
       },
       {
       }
     ],
     overlayFooterItems: [
       {
-        identifier: "TEST2",
-        icon: "mdi-home",
-        text: "Test2",
-        value: "Test2"
       },
       {
       },
@@ -314,6 +306,7 @@ Axios.interceptors.request.use(config => {
       config.headers['Authorization'] = "Bearer " + sessionStorage.getItem("appAuthToken");
     }
   }
+  /*
   else if(config.url.includes("https://api.twitch.tv/helix")) {
     //TWITCH CALL
     if(sessionStorage.getItem("twitchAuthToken")) {
@@ -321,6 +314,7 @@ Axios.interceptors.request.use(config => {
       config.headers['Authorization'] = "Bearer " + sessionStorage.getItem("twitchAuthToken");
     }
   }
+   */
   return config;
 })
 

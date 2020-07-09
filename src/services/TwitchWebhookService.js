@@ -1,27 +1,21 @@
 import Axios from 'axios';
 
-const api_base_url = "https://api.twitch.tv/helix";
-
 export default class TwitchWebhookService {
 
     subscribe(callBackRoute, topicUrl) {
-        return Axios.post(api_base_url + "/webhooks/hub", {
-            hub: {
-                callback: process.env.VUE_APP_ROOT + callBackRoute,
-                mode: "subscribe",
-                topic: topicUrl,
-                lease_seconds: 864000
+        return Axios.get(process.env.VUE_APP_ROOT_API + "/api/webhooks/subscribe", {
+            params: {
+                callBackUrl: process.env.VUE_APP_ROOT_API + "/api" + callBackRoute,
+                topicUrl: topicUrl
             }
         });
     }
 
     unsubscribe(callBackRoute, topicUrl) {
-        return Axios.post(api_base_url + "/webhooks/hub", {
-            hub: {
-                callback: process.env.VUE_APP_ROOT + callBackRoute,
-                mode: "unsubscribe",
-                topic: topicUrl,
-                lease_seconds: 864000
+        return Axios.get(process.env.VUE_APP_ROOT_API + "/api/webhooks/unsubscribe", {
+            params: {
+                callbackUrl: process.env.VUE_APP_ROOT_API + "/api" + callBackRoute,
+                topicUrl: topicUrl
             }
         });
     }

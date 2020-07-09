@@ -3,11 +3,11 @@ import Axios from 'axios';
 export default class CommandService {
 
     createCommand(command) {
-        return Axios.post(process.env.VUE_APP_ROOT_API + "/command", command);
+        return Axios.post(process.env.VUE_APP_ROOT_API + "/api/command", command);
     }
 
     getCommandById(commandId) {
-        return Axios.get(process.env.VUE_APP_ROOT_API + "/command", {
+        return Axios.get(process.env.VUE_APP_ROOT_API + "/api/command", {
             params: {
                 commandId: commandId
             }
@@ -15,7 +15,7 @@ export default class CommandService {
     }
 
     updateCommand(commandId, command) {
-        return Axios.put(process.env.VUE_APP_ROOT_API + "/command", command, {
+        return Axios.put(process.env.VUE_APP_ROOT_API + "/api/command", command, {
             params: {
                 commandId: commandId
             }
@@ -23,7 +23,7 @@ export default class CommandService {
     }
 
     deleteCommand(commandId) {
-        return Axios.delete(process.env.VUE_APP_ROOT_API + "/command", {
+        return Axios.delete(process.env.VUE_APP_ROOT_API + "/api/command", {
             params: {
                 commandId: commandId
             }
@@ -31,7 +31,7 @@ export default class CommandService {
     }
 
     getAllCommands() {
-        return Axios.get(process.env.VUE_APP_ROOT_API + "/command/all");
+        return Axios.get(process.env.VUE_APP_ROOT_API + "/api/command/all");
     }
 
 }

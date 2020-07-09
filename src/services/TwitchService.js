@@ -13,7 +13,23 @@ export default class TwitchService {
         });
     }
 
-    testGetChannel() {
-        return Axios.get(api_base_url + "/streams?game_id=33214");
+    getGameById(gameId) {
+        return Axios.get(api_base_url + "/games?id=" + gameId,
+        {
+                headers: {
+                    'Client-ID': process.env.VUE_APP_TWITCH_PUBLIC_CLIENT_ID,
+                    'Authorization': 'Bearer ukrdvm2watew450p8efvvvrc40khqe'
+                }
+            });
+    }
+
+    getWebhookAdresses() {
+        return Axios.get("https://api.twitch.tv/helix/webhooks/subscriptions?first=20",
+        {
+                headers: {
+                    'Client-ID': process.env.VUE_APP_TWITCH_PUBLIC_CLIENT_ID,
+                    'Authorization': 'Bearer ukrdvm2watew450p8efvvvrc40khqe'
+                }
+            });
     }
 }

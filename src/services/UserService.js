@@ -3,11 +3,11 @@ import Axios from 'axios';
 export default class UserService {
 
     createUser(userWithCredentials) {
-        return Axios.post(process.env.VUE_APP_ROOT_API + "/user", userWithCredentials);
+        return Axios.post(process.env.VUE_APP_ROOT_API + "/api/user", userWithCredentials);
     }
 
     getUserById(userId) {
-        return Axios.get(process.env.VUE_APP_ROOT_API + "/user", {
+        return Axios.get(process.env.VUE_APP_ROOT_API + "/api/user", {
             params: {
                 userId: userId
             }
@@ -15,7 +15,7 @@ export default class UserService {
     }
 
     updateUser(userId, user) {
-        return Axios.put(process.env.VUE_APP_ROOT_API + "/user", user, {
+        return Axios.put(process.env.VUE_APP_ROOT_API + "/api/user", user, {
             params: {
                 userId: userId
             }
@@ -23,7 +23,7 @@ export default class UserService {
     }
 
     deleteUser(userId) {
-        return Axios.delete(process.env.VUE_APP_ROOT_API + "/user", {
+        return Axios.delete(process.env.VUE_APP_ROOT_API + "/api/user", {
             params: {
                 userId: userId
             }
@@ -31,7 +31,7 @@ export default class UserService {
     }
 
     getAllCommands() {
-        return Axios.get(process.env.VUE_APP_ROOT_API + "/user/all");
+        return Axios.get(process.env.VUE_APP_ROOT_API + "/api/user/all");
     }
 
 }
