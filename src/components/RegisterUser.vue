@@ -263,15 +263,11 @@
             duration: 2500,
           });
           this.$router.push({name: "Login"});
-          sessionStorage.setItem("twitchAuthToken", localStorage.getItem("twitchAuthMemory"));
-          localStorage.removeItem("twitchAuthMemory");
         });
       },
       handleTwitchAuthentication() {
-        let clientId = process.env.VUE_APP_TWITCH_PUBLIC_CLIENT_ID;
-        let returnUrl = process.env.VUE_APP_ROOT + "/register/2";
-        let scope = "user:read:email+channel:read:subscriptions+chat:read+chat:edit";
-        window.location = "https://id.twitch.tv/oauth2/authorize?client_id=" + clientId + "&response_type=token&scope=" + scope + "&redirect_uri=" + returnUrl;
+        sessionStorage.setItem("returnComponent", "/register/2");
+        twitchService.requestAccessToken("/requestaccesstoken");
       }
     },
     created() {
@@ -283,9 +279,9 @@
       }
     },
     mounted() {
-      if(localStorage.getItem("twitchAuthMemory")) {
-        this.twitchOAuth = localStorage.getItem("twitchAuthMemory");
-        twitchService.getUserByBearer(localStorage.getItem("twitchAuthMemory")).then(response => {
+      if(sessionStorage.getItem("twitchAuthToken")) {
+        this.twitchOAuth = sessionStorage.getItem("twitchAuthToken");
+        twitchService.getUserByBearer().then(response => {
           this.twitchAuthenticatedAccount = response.data.data[0];
           if(this.currentStep === "1") {
             //FIRST PAGE MAY ALWAYS BE ACCESSED
@@ -306,27 +302,30 @@
           }
         });
       }else{
-        let accessToken = this.$router.currentRoute.hash.split("&")[0].substr(14, this.$router.currentRoute.hash.length);
+        let accessToken = sessionStorage.getItem("twitchAuthToken")
         if(accessToken) {
           this.twitchOAuth = accessToken;
           twitchService.getUserByBearer(accessToken).then(response => {
-            this.twitchAuthenticatedAccount = response.data.data[0];
-            if(this.currentStep === "1") {
-              //FIRST PAGE MAY ALWAYS BE ACCESSED
-            }else if(this.currentStep === "2") {
-              //SECOND PAGE MAY ONLY BE ACCESSED IF FIRST ONE IS VALID
-              if(!this.$refs.credentialsForm.validate()) {
-                this.$router.push({name: "Register", params: { step: "1" }});
+            console.warn(response);
+            if(response.status === 200) {
+              this.twitchAuthenticatedAccount = response.data.data[0];
+              if(this.currentStep === "1") {
+                //FIRST PAGE MAY ALWAYS BE ACCESSED
+              }else if(this.currentStep === "2") {
+                //SECOND PAGE MAY ONLY BE ACCESSED IF FIRST ONE IS VALID
+                if(!this.$refs.credentialsForm.validate()) {
+                  this.$router.push({name: "Register", params: { step: "1" }});
 
-              }
-            }else if(this.currentStep === "3") {
-              //LAST PAGE MAY ONLY BE ACCESSED IF FIRST AND SECOND ONES ARE VALID
-              if(!this.$refs.credentialsForm.validate()) {
-                this.$router.push({name: "Register", params: { step: "1" }});
+                }
+              }else if(this.currentStep === "3") {
+                //LAST PAGE MAY ONLY BE ACCESSED IF FIRST AND SECOND ONES ARE VALID
+                if(!this.$refs.credentialsForm.validate()) {
+                  this.$router.push({name: "Register", params: { step: "1" }});
 
-              }else{
-                if(!this.twitchAuthenticatedAccount || !this.twitchOAuth) {
-                  this.$router.push({name: "Register", params: { step: "2" }});
+                }else{
+                  if(!this.twitchAuthenticatedAccount || !this.twitchOAuth) {
+                    this.$router.push({name: "Register", params: { step: "2" }});
+                  }
                 }
               }
             }

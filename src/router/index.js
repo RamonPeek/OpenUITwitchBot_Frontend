@@ -8,6 +8,7 @@ import Register from '../views/register/register.vue'
 import Login from '../views/login/login.vue'
 import Logout from '../views/logout/logout.vue'
 import StreamOverlay from '../views/streamoverlay/streamoverlay.vue'
+import RequestAccessToken from '../views/requestaccesstoken/requestaccesstoken.vue'
 
 Vue.use(VueRouter)
 
@@ -56,6 +57,11 @@ Vue.use(VueRouter)
     path: '/streamoverlay',
     name: 'StreamOverlay',
     component: StreamOverlay
+  },
+  {
+    path: '/requestaccesstoken',
+    name: 'RequestAccessToken',
+    component: RequestAccessToken
   },
   {
     path: '*',

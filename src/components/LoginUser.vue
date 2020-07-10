@@ -102,7 +102,6 @@
             sessionStorage.setItem("appAuthToken", response.data.token);
             authService.validate().then(userIdResponse => {
               userService.getUserById(userIdResponse.data).then(userResponse => {
-                sessionStorage.setItem("twitchAuthToken", userResponse.data.twitchAccount.oAuthToken);
                 this.$store.dispatch("setLoggedIn", true);
                 this.$store.dispatch("setCurrentUser", userResponse.data);
                 this.$toast.open({

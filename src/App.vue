@@ -283,7 +283,6 @@ export default {
         if(response.status === 200) {
           authService.validate().then(userIdResponse => {
             userService.getUserById(userIdResponse.data).then(userResponse => {
-              sessionStorage.setItem("twitchAuthToken", userResponse.data.twitchAccount.oAuthToken);
               this.$store.dispatch("setLoggedIn", true);
               this.$store.dispatch("setCurrentUser", userResponse.data);
               this.$store.dispatch("initializeTwitchBotClient");

@@ -3,17 +3,21 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import router from './router'
 import Vuex from 'vuex'
-import Axios from 'axios'
 import AuthService from './services/AuthService';
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-default.css';
 import BotService from "./services/BotService";
 import CommandService from "./services/CommandService";
+import TwitchService from "./services/TwitchService";
+import Axios from "axios";
 
 let commandService = new CommandService();
 let authService = new AuthService();
+let twitchService = new TwitchService();
 
 Vue.config.productionTip = false
+const CancelToken = Axios.CancelToken;
+const source = CancelToken.source();
 
 /* Global methods and constants */
 Vue.use(Vuex)
@@ -22,7 +26,8 @@ Vue.use(VueToast);
 let whiteListedRoutes = [
   "Login",
   "Register",
-  "Logout"
+  "Logout",
+  "RequestAccessToken"
 ]
 
 /* Define constants */
@@ -81,7 +86,8 @@ const store = new Vuex.Store({
         value: "-"
       }
     ],
-    twitchBotClient: null
+    twitchBotClient: null,
+    receivedChatCommands: []
   },
   mutations: {
     setLoggedIn(state, loginState) {
@@ -118,12 +124,16 @@ const store = new Vuex.Store({
         state.overlayFooterItems[indexToUpdateInFooter].value = identifierValue.value.toString();
       }
     },
+    addReceivedChatCommand(state, command) {
+      state.receivedChatCommands.push(command);
+    },
     initializeTwitchBotClient(state) {
       if(state.twitchBotClient) {
         state.twitchBotClient.disconnect();
       }
-      state.twitchBotClient = new BotService(this.getters.currentUser.twitchAccount.displayName, 'oauth:' + this.getters.currentUser.twitchAccount.oAuthToken,
+      state.twitchBotClient = new BotService(this.getters.currentUser.twitchAccount.displayName, 'oauth:' + sessionStorage.getItem("twitchAuthToken"),
           [this.getters.currentUser.twitchAccount.displayName]).getClient();
+      //TODO CHANGE TO GET ALL COMMANDS FROM USER?
       commandService.getAllCommands().then(response => {
         if(response.status === 200) {
           let chatActionCommands = [];
@@ -133,16 +143,16 @@ const store = new Vuex.Store({
               chatActionCommands.push(command);
             }
           });
-          console.warn(chatActionCommands);
-          //RUN THE COMMAND ACTION_HANDLER ON THE BACKGROUND AS THIS HAS TO WORK ALWAYS WHEN THE APP IS RUNNING (NO MATTER WHICH COMPONENT)
-          //START THE BOT SERVICE ONCE THE USER IS SUCCESSFULLY AUTHENTICATED.
-          //TODO MOVE THIS TO SEPERATE BOT ACCOUNT INSTEAD OF LOGGEDIN USER
+          //TODO MOVE THIS TO SEPERATE BOT ACCOUNT INSTEAD OF LOGGED-IN USER
           this.getters.twitchBotClient.connect();
           this.getters.twitchBotClient.on("chat", function (channel, user, message) {
             chatActionCommands.forEach(command => {
               if(message.startsWith(command.tag)) {
                 let message = "[BOT_NAME]: " + command.content;
                 state.twitchBotClient.say(state.currentUser.twitchAccount.displayName, message);
+                //Add sender for displaying in chatoverview
+                command.sender = user.username;
+                store.dispatch("addReceivedChatCommand", command);
               }
             })
           });
@@ -178,6 +188,9 @@ const store = new Vuex.Store({
     updateValueForIdentifier(state, identifierValue) {
       state.commit("updateValueForIdentifier", identifierValue);
     },
+    addReceivedChatCommand(state, command) {
+      state.commit("addReceivedChatCommand", command);
+    },
     initializeTwitchBotClient(state, client) {
       state.commit("initializeTwitchBotClient", client);
     }
@@ -198,189 +211,102 @@ const store = new Vuex.Store({
     overlayFooterItems(state) {
       return state.overlayFooterItems;
     },
+    receivedChatCommands(state) {
+      return state.receivedChatCommands;
+    },
     twitchBotClient(state) {
       return state.twitchBotClient;
     }
   },
 })
 
-/* Execute before each route-change */
+/* Handle authentication when switching between components */
 router.beforeEach((to, from, next) => {
-  //User first loads app
-  if(from.name == null) {
-    //Component requires authentication
-    if (!whiteListedRoutes.includes(to.name)) {
-      if (sessionStorage.getItem("appAuthToken")) {
-        authService.validate().then(response => {
-          if (response.status === 401) {
-            Vue.$toast.open({
-              message: 'Your session has expired.',
-              type: 'error',
-              duration: 2500,
-            });
-            next({name: "Logout"});
-          } else {
-            next();
-          }
-        });
-      } else {
-        Vue.$toast.open({
-          message: 'You must be logged-in to view this page.',
-          type: 'error',
-          duration: 2500,
-        })
-        next({name: "Logout"});
-      }
-      //Component does not requires authentication
-    } else {
-      if (to.name === "Login") {
-        if (sessionStorage.getItem("appAuthToken")) {
-          authService.validate().then(response => {
-            if (response.status === 401) {
-              Vue.$toast.open({
-                message: 'Your session has expired.',
-                type: 'error',
-                duration: 2500,
-              });
-              next({name: "Logout"});
-            } else {
-              next({name: "Dashboard"});
-            }
-          });
-        } else {
-          next();
-        }
-      } else if (to.name === "Register") {
-        if (sessionStorage.getItem("appAuthToken")) {
-          authService.validate().then(response => {
-            if (response.status === 401) {
-              Vue.$toast.open({
-                message: 'Your session has expired.',
-                type: 'error',
-                duration: 2500,
-              });
-              next({name: "Logout"});
-            } else {
-              next({name: "Dashboard"});
-            }
-          });
-        } else {
-          next();
-        }
-      } else {
-        next();
-      }
-    }
-  }else{
-    //Remove temporarily store register credentials when navigating away from the register-component
-    if(from.name === "Register" && to.name !== "Register") {
-      localStorage.removeItem("registerCredentialsMemory");
-      localStorage.removeItem("twitchAuthMemory");
-      next();
-    }else {
-      //Component requires authentication
-      if (!whiteListedRoutes.includes(to.name)) {
-        if (sessionStorage.getItem("appAuthToken")) {
-          authService.validate().then(response => {
-            if (response.status === 401) {
-              Vue.$toast.open({
-                message: 'Your session has expired.',
-                type: 'error',
-                duration: 2500,
-              });
-              next({name: "Logout"});
-            } else {
-              next();
-            }
-          });
-        } else {
-          Vue.$toast.open({
-            message: 'You must be logged-in to view this page.',
-            type: 'error',
-            duration: 2500,
-          })
-          next({name: "Logout"});
-        }
-        //Component does not requires authentication
-      } else {
-        if (to.name === "Login") {
-          if (sessionStorage.getItem("appAuthToken")) {
-            authService.validate().then(response => {
-              if (response.status === 401) {
-                Vue.$toast.open({
-                  message: 'Your session has expired.',
-                  type: 'error',
-                  duration: 2500,
-                });
-                next({name: "Logout"});
-              } else {
-                next({name: "Dashboard"});
+  if(to.name && to.name !== "RequestAccessToken") {
+    sessionStorage.setItem("returnComponent", to.path);
+  }
+  //Component requires authentication
+  if (!whiteListedRoutes.includes(to.name)) {
+    //App auth token is present in sessions
+    if(sessionStorage.getItem("appAuthToken")) {
+      authService.validate().then(authResponse => {
+        //Authentication succeeded
+        if(authResponse.status === 200) {
+          //Twitch token is present in sessions
+          if(sessionStorage.getItem("twitchAuthToken")) {
+            twitchService.validateToken().then(response => {
+              //Twitch authentication succeeded
+              if(response.status === 200) {
+                console.log(1);
+                next();
               }
-            });
-          } else {
-            next();
-          }
-        } else if (to.name === "Register") {
-          if (sessionStorage.getItem("appAuthToken")) {
-            authService.validate().then(response => {
-              if (response.status === 401) {
-                Vue.$toast.open({
-                  message: 'Your session has expired.',
-                  type: 'error',
-                  duration: 2500,
-                });
-                next({name: "Logout"});
-              } else {
-                next({name: "Dashboard"});
+              //Twitch authentication failed
+              else {
+                sessionStorage.removeItem("twitchAuthToken");
+                next();
               }
-            });
-          } else {
-            next();
+            })
           }
-        } else if(to.name === "Logout") {
-          Vue.$toast.open({
-            message: 'Successfully logged out.',
-            type: 'success',
-            duration: 2500,
-          });
-          next();
-        }else{
-          next();
+          //Twitch token is not present in sessions
+          else {
+            twitchService.requestAccessToken("/requestaccesstoken");
+            source.cancel();
+          }
         }
-      }
+        //Authentication failed because the token is invalid.
+        else {
+          sessionStorage.removeItem("appAuthToken");
+          next({name: "Login"});
+        }
+      });
     }
+    //App auth token is not present in sessions
+    else {
+      next({name: "Login"});
+    }
+  } else {
+    next();
   }
 });
-``
-/* Automatically add auth-tokens if possible */
+
+/* Automatically add auth-tokens for both this app and Twitch */
 Axios.interceptors.request.use(config => {
+  //Rest-call is targeted towards the app's backend
   if(config.url.includes(process.env.VUE_APP_ROOT_API)) {
-    //APP CALL
+    //App authentication token is present in sessions
     if(sessionStorage.getItem("appAuthToken")) {
       config.headers['Authorization'] = "Bearer " + sessionStorage.getItem("appAuthToken");
     }
   }
+  //Rest-call is targeted towards Twitch's backend
+  else if(config.url.includes("https://api.twitch.tv/helix")) {
+    if(sessionStorage.getItem("twitchAuthToken")) {
+      config.headers['Authorization'] = "Bearer " + sessionStorage.getItem("twitchAuthToken");
+      config.headers['Client-Id'] = process.env.VUE_APP_TWITCH_PUBLIC_CLIENT_ID;
+    }
+  }
   return config;
-})
+});
 
-/* Automatically log the user off when the token is expired or not valid */
+/* Handle Rest-call responses */
 Axios.interceptors.response.use((response) => {
   return response;
 }, (error) => {
   if (!error.response) {
-    //TODO Show error
+    //TODO Show generic error
   } else {
     if(error.response.config.url.includes(process.env.VUE_APP_ROOT_API)) {
       if (error.response.status === 401) {
-        // UNAUTHORIZED (Because token is no longer valid, so redirect user to logout to remove invalid token)
+        // UNAUTHORIZED (Because token is no longer valid, or no token is provided)
         if(router.currentRoute.name !== "Login") {
-          //TODO SHOW ERROR WHICH SHOWS THAT SESSION HAS EXPIRED
           Vue.$toast.open({
             message: 'Your session has expired.',
             type: 'error',
             duration: 2500,
           });
-          router.push({name: "Logout"});
+          sessionStorage.removeItem("appAuthToken");
+          sessionStorage.removeItem("twitchAuthToken");
+          this.$router.push({name: "Login"});
         }else{
           Vue.$toast.open({
             message: 'The combination of username and password is not valid.',
@@ -390,8 +316,13 @@ Axios.interceptors.response.use((response) => {
         }
       }
     }else if(error.response.config.url.includes("https://api.twitch.tv/helix")) {
-      //TODO REDIRECT TO RE-AUTH WITH TWITCH PAGE
-      console.warn("Re-auth with Twitch");
+      if(error.response.status === 401 && router.currentRoute.name !== "Register") {
+        Vue.$toast.open({
+          message: 'You Twitch-session has expired. Please re-connect your account.',
+          type: 'error',
+          duration: 2500,
+        });
+      }
     }
 
   }

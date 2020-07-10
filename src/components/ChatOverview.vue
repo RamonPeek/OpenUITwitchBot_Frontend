@@ -14,8 +14,8 @@
           <v-avatar left>
             <v-icon>mdi-account-circle</v-icon>
           </v-avatar>
-          <p class="command_chip_datetime">{{command.datetime.getHours()}}:{{command.datetime.getMinutes()}}</p>
-          <p class="command_chip_text"><b>{{command.username}}</b>: {{command.command}}</p>
+          <!--<p class="command_chip_datetime">{{command.datetime.getHours()}}:{{command.datetime.getMinutes()}}</p>-->
+          <p class="command_chip_text"><b>{{command.sender}}</b>: {{command.tag}}</p>
         </v-chip>
       </div>
     </div>
@@ -60,55 +60,28 @@
 </style>
 
 <script>
-  import BotService from '../services/BotService'
-  import AppSettings from '../../app_settings.json';
-  import Command from '../models/Command';
-  import $ from 'jquery';
-  import CommandService from '../services/CommandService';
 
-  let commandService = new CommandService();
-  let bot = new BotService(AppSettings.bot_username, AppSettings.bot_oauth, AppSettings.bot_channels);
+  import $ from 'jquery';
 
   export default {
     name: 'ChatOverview',
 
     data () {
       return {
-        client: null,
-        receivedCommands: [],
-        activeCommands: []
+        //TODO TEMP SOLUTION. IN THE FUTURE I NEED TO PUT THIS IN THE VUEX STORE, ALSO CHECK MAIN.JS FOR COMMANDHANDLING
+        receivedCommands: []
       }
     },
-    created: function() {
-      this.initializeBot()
-    },
-    beforeDestroy: function() {
-      this.destroyBot()
+    watch: {
+      receivedCommands: function() {
+        $("#command_chips_container").animate({ scrollTop: $('#command_chips_container')[0].scrollHeight}, 500);
+      }
     },
     methods: {
-      initializeBot() {
-        this.client = bot.getClient();
 
-        this.client.on("message", (target, context, message) => {
-          var command = new Command(context.username, message, new Date());
-          this.activeCommands.forEach(element => {
-            if(element.tag === message) {
-              this.receivedCommands.push(command);
-              $("#command_chips_container").animate({ scrollTop: $('#command_chips_container')[0].scrollHeight}, 500);
-            }
-          });
-        });
-        this.client.connect();
-      },
-      destroyBot() {
-        this.client.disconnect();
-      }
     },
     mounted() {
-      //TODO REPLACE WITH COMMANDS PER CHANNEL (USER)
-      commandService.getAllCommands().then(commandsResponse => {
-        this.activeCommands = commandsResponse.data;
-      });
+      this.receivedCommands = this.$store.state.receivedChatCommands;
     }
   }
 </script>
