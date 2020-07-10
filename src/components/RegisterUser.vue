@@ -246,7 +246,6 @@
             id: null,
             twitchAccount: {
               id: this.twitchAuthenticatedAccount.id,
-              oAuthToken: this.twitchOAuth,
               displayName: this.twitchAuthenticatedAccount.display_name,
               description: this.twitchAuthenticatedAccount.description,
               profileImageUrl: this.twitchAuthenticatedAccount.profile_image_url,
@@ -264,6 +263,8 @@
             duration: 2500,
           });
           this.$router.push({name: "Login"});
+          sessionStorage.setItem("twitchAuthToken", localStorage.getItem("twitchAuthMemory"));
+          localStorage.removeItem("twitchAuthMemory");
         });
       },
       handleTwitchAuthentication() {
@@ -282,9 +283,9 @@
       }
     },
     mounted() {
-      if(localStorage.getItem("twitchAuth")) {
-        this.twitchOAuth = localStorage.getItem("twitchAuth");
-        twitchService.getUserByBearer(localStorage.getItem("twitchAuth")).then(response => {
+      if(localStorage.getItem("twitchAuthMemory")) {
+        this.twitchOAuth = localStorage.getItem("twitchAuthMemory");
+        twitchService.getUserByBearer(localStorage.getItem("twitchAuthMemory")).then(response => {
           this.twitchAuthenticatedAccount = response.data.data[0];
           if(this.currentStep === "1") {
             //FIRST PAGE MAY ALWAYS BE ACCESSED

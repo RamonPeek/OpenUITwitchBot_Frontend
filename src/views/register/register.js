@@ -33,12 +33,10 @@ export default {
       let accessToken = this.$router.currentRoute.hash.split("&")[0].substr(14, this.$router.currentRoute.hash.length);
       history.replaceState({}, null, "/register/2");
 
-
-
       if(accessToken) {
-        localStorage.twitchAuth = accessToken;
+        localStorage.setItem("twitchAuthMemory", accessToken);
       }else{
-        localStorage.removeItem("twitchAuth");
+        localStorage.removeItem("twitchAuthMemory");
         this.$router.push({name: "Register"});
       }
 

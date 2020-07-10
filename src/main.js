@@ -275,7 +275,7 @@ router.beforeEach((to, from, next) => {
     //Remove temporarily store register credentials when navigating away from the register-component
     if(from.name === "Register" && to.name !== "Register") {
       localStorage.removeItem("registerCredentialsMemory");
-      localStorage.removeItem("twitchAuth");
+      localStorage.removeItem("twitchAuthMemory");
       next();
     }else {
       //Component requires authentication
@@ -360,15 +360,6 @@ Axios.interceptors.request.use(config => {
       config.headers['Authorization'] = "Bearer " + sessionStorage.getItem("appAuthToken");
     }
   }
-  /*
-  else if(config.url.includes("https://api.twitch.tv/helix")) {
-    //TWITCH CALL
-    if(sessionStorage.getItem("twitchAuthToken")) {
-      config.headers['Client-Id'] = process.env.VUE_APP_TWITCH_PUBLIC_CLIENT_ID;
-      config.headers['Authorization'] = "Bearer " + sessionStorage.getItem("twitchAuthToken");
-    }
-  }
-   */
   return config;
 })
 
